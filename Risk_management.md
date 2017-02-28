@@ -10,6 +10,7 @@
 > 6. Revised stakeholders tolerances
 > 7. Tracking
 > 8. Risk Documentation
+> 
 > #### **Potential negative risk conditions**
 > 1. Integration
 > 2. Scope
