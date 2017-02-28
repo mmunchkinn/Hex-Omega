@@ -23,3 +23,6 @@
 > 9. Procurement
 > 10. Stakeholders
 > 
+> a. **Probability-impact matrix is key in a risk management plan.**
+> b. **Need a Risk Register**
+> c. **Risk breakdown structure**
