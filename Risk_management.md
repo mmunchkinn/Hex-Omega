@@ -31,7 +31,7 @@
 > 
 > 
 ## <quote> Look into python Google drive API.</quote>
-> ```URL
-> https://developers.google.com/drive/v3/web/quickstart/python
-> ```
-> <code>https://developers.google.com/drive/v3/web/quickstart/python</code>
+```URL
+ https://developers.google.com/drive/v3/web/quickstart/python
+```
+___
