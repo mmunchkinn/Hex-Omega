@@ -61,3 +61,25 @@ ___
 > 5. Will we use the ERD?
 > 6. For Quality Control, show the demonstration.
 > 7. Can show a histogram of quality values due to a result of End-User testing.
+
+___
+#### Testing cool stuff... Not part of Risks. 
+```sequence
+Alice->Bob: Hello Bob, how are you?
+Bob-->Alice: I am good thanks!
+```
+
+
+```flow
+start=>start: Start
+end=>end
+
+inp1=>operation: Input 1 number [val]
+cond1=>condition: Is [val] % 2 == 0 ?
+out1=>operation: Print 'Even Number'
+out2=>operation: Print 'Odd Number'
+
+start->inp1->cond1
+cond1(yes)->out1->end
+cond1(no)->out2->end
+```
