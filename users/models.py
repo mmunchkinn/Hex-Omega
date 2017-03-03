@@ -19,6 +19,31 @@ class AdminUser(User):
     Most of the fields are inherited from AbstractUser.
     """
 
+    first_name = models.CharField('first name')
+    last_name = models.CharField('last name')
+    email = models.EmailField('email address', unique=True)
+    user_id = models.CharField(unique=True)
+    is_active = models.BooleanField('active', default=True)
+
+    USERNAME_FIELD = user_id
+
+    def create_admin(self, user_id, first_name, last_name, email, password):
+        """
+        Class that creates an admin user
+        :param user_id:
+        :param first_name:
+        :param last_name:
+        :param email:
+        :param password:
+        :return:
+        """
+        email = self.normalize_email(email)
+        user = User.objects.create(userid=user_id, first_name=first_name, last_name=last_name, email=email)
+        # user = self.objects.create(user_id=user_id, first_name=first_name, last_name=last_name, email=email)
+        user.set_password(password)
+        user.save()
+        return user
+
     class Meta:
         db_table = 'AdminUser'
         permissions = (
