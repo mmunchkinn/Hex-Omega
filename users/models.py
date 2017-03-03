@@ -166,7 +166,7 @@ class Task(models.Model):
 class ActivityLog(models.Model):
     title = models.CharField(max_length=30)
     # the content variable is the path to the actual log file.
-    # content = models.TextField(max_length=100, blank=True, null=True)
+    content = models.TextField(max_length=100, blank=True, null=True)
     project = models.OneToOneField(Project)
     timestamp = models.DateTimeField(auto_now=True)
 
