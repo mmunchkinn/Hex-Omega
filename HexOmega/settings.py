@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'guardian',
     'users',
+    'log'
     # 'action_list'
 ]
 
