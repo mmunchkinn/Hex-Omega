@@ -62,6 +62,7 @@ def add_admin_to_group(sender, **kwargs):
     :param kwargs: list of essential arguments
     :return: None
     """
+
     admin_group, created = Group.objects.get_or_create(name='admin_group')
     if created:
         pass
@@ -105,8 +106,45 @@ class Role(models.Model):
         db_table = 'Role'
 
 
+class Project(models.Model):
+    """
+    Model changelog:
+        1.  have to add null=True for the date fields.
+    """
+    name = models.CharField(max_length=50, blank=False)
+    STATUS_CHOICES = (
+        ('Open', 'Open'),
+        ('Closed', 'Closed')
+    )
+    status = models.CharField(choices=STATUS_CHOICES, default=0, max_length=7)
+    start_date = models.DateTimeField(blank=True)
+    end_date = models.DateTimeField(blank=True)
+    description = models.TextField(max_length=500, blank=True)
+    leader = models.OneToOneField(LeaderUser, models.DO_NOTHING)
+    admins = models.ManyToManyField(AdminUser)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        db_table = 'Project'
+
+
+@receiver(post_save, sender=Project)
+def add_activitylog(sender, instance, created, **kwargs):
+    if created:
+        ActivityLog.objects.create(title=instance.name, project=instance)
+
+
+@receiver(post_save, sender=Project)
+def add_actionlist(sender, instance, created, **kwargs):
+    if created:
+        ActionList.objects.create(name=instance.name, project=instance)
+
+
 class ActionList(models.Model):
     name = models.CharField(max_length=30)
+    project = models.OneToOneField(Project)
     description = models.TextField(max_length=500, blank=True)
 
     def __str__(self):
@@ -152,7 +190,9 @@ class Task(models.Model):
 
 class ActivityLog(models.Model):
     title = models.CharField(max_length=30)
-    content = models.TextField(100, blank=True, null=True)
+    # the content variable is the path to the actual log file.
+    content = models.TextField(max_length=100, blank=True, null=True)
+    project = models.OneToOneField(Project)
     timestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -160,32 +200,6 @@ class ActivityLog(models.Model):
 
     class Meta:
         db_table = 'ActivityLog'
-
-
-class Project(models.Model):
-    """
-    Model changelog:
-        1.  have to add null=True for the date fields.
-    """
-    name = models.CharField(max_length=50, blank=False)
-    STATUS_CHOICES = (
-        ('Open', 'Open'),
-        ('Closed', 'Closed')
-    )
-    status = models.CharField(choices=STATUS_CHOICES, default=0, max_length=7)
-    start_date = models.DateTimeField(blank=True)
-    end_date = models.DateTimeField(blank=True)
-    description = models.TextField(max_length=500, blank=True)
-    action_list = models.OneToOneField(ActionList, models.CASCADE, blank=True, null=True)
-    activity_log = models.OneToOneField(ActivityLog, models.CASCADE, blank=True, null=True)
-    leader = models.OneToOneField(LeaderUser, models.DO_NOTHING)
-    admins = models.ManyToManyField(AdminUser)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        db_table = 'Project'
 
 
 class MemberUser(User):
