@@ -8,7 +8,7 @@ from guardian.mixins import GuardianUserMixin
 
 
 class User(AbstractUser, GuardianUserMixin):
-    username = models.CharField(max_length=30, primary_key=True)
+    # username = models.CharField(max_length=30, primary_key=True)
     bio = models.TextField(max_length=500, blank=True)
     is_admin = False
     is_leader = False
@@ -197,19 +197,19 @@ class MemberUser(User, PermissionsMixin):
         )
 
 
-@receiver(post_save, sender=MemberUser)
-def add_member_to_group(sender, **kwargs):
-    """
-    Runs as soon as any MemberUser object is saved.
-    Creates/adds to the member group and permissions are given
-    to the member group.
-
-    :param sender: MemberUser
-    :param kwargs: list of essential arguments
-    :return: None
-    """
-    member_group, created = Group.objects.get_or_create(name='member_group')
-    if created:
-        pass
-    if kwargs['instance'].username != 'AnonymousUser':
-        member_group.user_set.add(kwargs.get('instance'))
+# @receiver(post_save, sender=MemberUser)
+# def add_member_to_group(sender, instance, created, **kwargs):
+#     """
+#     Runs as soon as any MemberUser object is saved.
+#     Creates/adds to the member group and permissions are given
+#     to the member group.
+#
+#     :param created:
+#     :param instance: instance of member user
+#     :param sender: MemberUser
+#     :param kwargs: list of essential arguments
+#     :return: None
+#     """
+#     if created and instance.username != 'AnonymousUser':
+#         # member_group.user_set.add(kwargs.get('instance'))
+#         instance.groups.add(Group.objects.get_or_create(name='member_group'))
