@@ -37,7 +37,13 @@
             <hr>
         {% endfor %}
     {% else %}
-        <i>No matches found.</i>
+        {% if not first %}
+            {% if not errors %}
+                <i>No matches found.</i>
+            {% endif %}
+        {% endif %}
     {%  endif %}
+
+
 </body>
 </html>

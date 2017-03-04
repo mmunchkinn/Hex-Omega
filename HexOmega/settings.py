@@ -37,12 +37,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'guardian',
     'users',
-    'log'
-    # 'action_list'
+    'log',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -124,6 +124,8 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',  # this is default
     'guardian.backends.ObjectPermissionBackend'
 ]
+
+import users
 
 AUTH_USER_MODEL = 'users.User'
 

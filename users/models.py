@@ -3,21 +3,27 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.contrib.auth.models import PermissionsMixin
 from guardian.mixins import GuardianUserMixin
 
 
 class User(AbstractUser, GuardianUserMixin):
+    username = models.CharField(max_length=30, primary_key=True)
     bio = models.TextField(max_length=500, blank=True)
+    is_admin = False
+    is_leader = False
+    is_member = False
 
     def __str__(self):
         return self.get_full_name()
 
 
-class AdminUser(User):
+class AdminUser(User, PermissionsMixin):
     """
     Class that hold data for every admin level user.
     Most of the fields are inherited from AbstractUser.
     """
+    is_admin = True
 
     class Meta:
         db_table = 'AdminUser'
@@ -45,7 +51,9 @@ def add_admin_to_group(sender, **kwargs):
         admin_group.user_set.add(kwargs.get('instance'))
 
 
-class LeaderUser(User):
+class LeaderUser(User, PermissionsMixin):
+    is_leader = True
+
     class Meta:
         db_table = 'Leader'
         permissions = (
@@ -177,9 +185,10 @@ class ActivityLog(models.Model):
         db_table = 'ActivityLog'
 
 
-class MemberUser(User):
+class MemberUser(User, PermissionsMixin):
     role = models.ForeignKey(Role, models.DO_NOTHING)
     project = models.ForeignKey(Project, models.DO_NOTHING)
+    is_member = True
 
     class Meta:
         db_table = 'Member'

@@ -1,15 +1,12 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.contrib.auth import authenticate, login
 
-from .models import Project, ActivityLog, ActionList
+from .models import Project, ActivityLog, ActionList, User
 
 """
     These views are only for testing the models, and their access
 """
-
-
-def search_form(request):
-    return render(request, 'users/search_form.html')
 
 
 def search(request):
@@ -51,4 +48,39 @@ def search(request):
 
     return render(request,
                   'users/search_form.html',
-                  {'errors': errors})
+                  {'errors': errors,
+                   'first': True})
+
+
+def index(request):
+    return render(request,
+                  'users/index.html')
+
+
+def login(request):
+    return render(request,
+                  'users/login.html')
+
+
+def login_auth(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(username=username, password=password)
+
+        print(user.username, user.get_full_name(), user.password, user.has_usable_password(), user.groups)
+
+        if user is not None:
+            print('User [{}] is logged in.'.format(user.username))
+            login(request)
+            return render(request,
+                          'users/login_auth.html',
+                          {'li': True,
+                           'user': user})
+        else:
+            return render(request,
+                          'users/login_auth.html',
+                          {'li': False})
+
+    else:
+        return HttpResponse('Use POST.')
