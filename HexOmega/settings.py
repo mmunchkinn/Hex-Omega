@@ -121,6 +121,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # auth backend.
 AUTHENTICATION_BACKENDS = [
+    'users.backends.CustomUserAuth',
     'django.contrib.auth.backends.ModelBackend',  # this is default
     'guardian.backends.ObjectPermissionBackend'
 ]

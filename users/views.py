@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import login
 
 from django.contrib.auth.models import Group
 
 from .models import Project, ActivityLog, ActionList, User, AdminUser, MemberUser, LeaderUser
+from .backends import CustomUserAuth
 
 """
     These views are only for testing the models, and their access
@@ -68,7 +69,7 @@ def login_auth(request):
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user = authenticate(username=username, password=password)
+        user = CustomUserAuth().authenticate(username=username, password=password)
 
         if AdminUser.objects.filter(username__exact=user.username).count() == 1:
             print('ADMIN')
@@ -77,9 +78,8 @@ def login_auth(request):
         if MemberUser.objects.filter(username__exact=user.username).count() == 1:
             print('MEMBER')
             print(Group.objects.filter(name__contains='member_group')[0])
-            g = Group.objects.filter(name__contains='member_group')[0]
 
-        print(user.username, user.get_full_name(), user.password, user.has_usable_password(), )
+        print(user.username, user.get_full_name(), user.password, user.has_usable_password(), user.__class__)
 
         if user is not None:
             print('User [{}] is logged in.'.format(user.username))
