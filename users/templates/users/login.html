@@ -68,7 +68,7 @@
                         <a href="{% url 'index' %}#aboutus">About Us</a>
                     </li>
                     <li>
-                        <a href="{% url 'login_page' %}">Login</a>
+                        <a href="{% url 'login_page' 0 %}">Login</a>
                     </li>
                     
                 </ul>
@@ -85,6 +85,7 @@
       <div class="jumbotron" style="text-align:centre">
      
         <form class="form-signin" action="{% url 'login_auth' %}" method="post">
+        <!-- <form class="form-signin" action="" method="post"> -->
             {% csrf_token %}
         <h2 class="form-signin-heading">Please log in</h2>
         <label for="inputUserID" class="sr-only">User ID</label>
@@ -96,6 +97,12 @@
             <input type="checkbox" value="remember-me"> Remember me
           </label>
         </div>
+            {% if error %}
+              <span style="color: red">The username or password is invalid.</span>
+            {% endif %}
+            {% if request.user.is_authenticated %}
+              <span style="color: red">{{ request.user.username }}</span>
+            {% endif %}
         <button class="btn btn-lg btn-primary btn-block" type="submit">Log in</button>
       </form>
  

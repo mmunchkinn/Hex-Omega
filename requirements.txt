@@ -2,4 +2,4 @@ django
 mysqlclient
 whitenoise
 django-guardian
-django-polymorphic
+django-annoying

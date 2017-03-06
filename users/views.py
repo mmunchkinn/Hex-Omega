@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth import login
 
@@ -19,21 +19,6 @@ def search(request):
         message += "<br>"
 
         projects = Project.objects.filter(name__contains=request.GET['q'])
-        # for p in projects:
-        #     message += "Project Name: {}<br>".format(p.name)
-        #     message += "<b>Admin(s):</b><br>"
-        #     for a in p.admins.all():
-        #         message += "{}<br>".format(a)
-        #     message += "<b>Leader:</b><br>"
-        #     message += "{}<br>".format(p.leader)
-        #     message += "<b>Member(s):</b><br>"
-        #     for a in p.memberuser_set.all():
-        #         message += "{}<br>".format(a)
-        #     message += "Log: {}<br>".format(p.activitylog.title)
-        #     message += "Log ID: {}<br>".format(p.activitylog.id)
-        #     message += "Log: {}<br>".format(p.actionlist.name)
-        #     message += "Log ID: {}<br>".format(p.actionlist.id)
-        #     message += "<hr><hr>"
         if request.GET['q'] is '':
             errors.append('Enter a search term.')
             return render(request,
@@ -60,38 +45,57 @@ def index(request):
                   'users/index.html')
 
 
-def login(request):
+def login_page(request, error):
+    if error is '0':
+        error = False
+    else:
+        error = True
+
+    # if request.user.is_authenticated():
+    #     return redirect('login_auth')
+
     return render(request,
-                  'users/login.html')
+                  'users/login.html',
+                  {'error': error,
+                   'request': request})
 
 
 def login_auth(request):
+    """
+    Hmmm.... most of it is working. THe only qualm right now
+    is if a logged in user returns to login page, and previously had
+    a wrong login attempt, it continues to show the error message.
+    :param request:
+    :return:
+    """
+    # if request.user.is_authenticated():
+    #     return render(request,
+    #                   'users/login_auth.html',
+    #                   {'li': True,
+    #                    'user': request.user})
+
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
         user = CustomUserAuth().authenticate(username=username, password=password)
 
-        if AdminUser.objects.filter(username__exact=user.username).count() == 1:
-            print('ADMIN')
-        if LeaderUser.objects.filter(username__exact=user.username).count() == 1:
-            print('LEADER')
-        if MemberUser.objects.filter(username__exact=user.username).count() == 1:
-            print('MEMBER')
-            print(Group.objects.filter(name__contains='member_group')[0])
+        if user is False:
+            # return render(request, 'users/login.html', {'error': True})
+            return redirect('login_page', 1)
 
-        print(user.username, user.get_full_name(), user.password, user.has_usable_password(), user.__class__)
-
+        # print(user.username, user.get_full_name(), user.password, user.has_usable_password(), user.__class__)
         if user is not None:
-            print('User [{}] is logged in.'.format(user.username))
-            login(request)
+            print('User [{}] is logging in.'.format(user.username))
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             return render(request,
                           'users/login_auth.html',
                           {'li': True,
                            'user': user})
-        else:
-            return render(request,
-                          'users/login_auth.html',
-                          {'li': False})
+            # else:
+            #     return render(request,
+            #                   'users/login_auth.html',
+            #                   {'li': False})
 
     else:
-        return HttpResponse('Use POST.')
+        return render(request, 'users/login.html', {'error': False})
+

@@ -6,20 +6,22 @@ class CustomUserAuth(object):
         try:
             user = None
             if AdminUser.objects.filter(username__exact=username).count() == 1:
-                print('ADMIN')
+                # print('ADMIN')
                 user = AdminUser.objects.get(username__exact=username)
             elif LeaderUser.objects.filter(username__exact=username).count() == 1:
-                print('LEADER')
+                # print('LEADER')
                 user = LeaderUser.objects.get(username__exact=username)
             elif MemberUser.objects.filter(username__exact=username).count() == 1:
-                print('MEMBER')
+                # print('MEMBER')
                 user = MemberUser.objects.get(username__exact=username)
             elif User.objects.filter(username__exact=username).count() == 1:
-                print('USER')
+                # print('USER')
                 user = User.objects.get(username__exact=username)
 
             if user is not None and user.check_password(password):
                 return user
+            else:
+                return False
 
         except User.DoesNotExist:
             return None

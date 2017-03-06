@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'guardian',
+    'annoying',
     'users',
     'log',
 ]
@@ -121,7 +122,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 # auth backend.
 AUTHENTICATION_BACKENDS = [
-    'users.backends.CustomUserAuth',
+    # 'users.backends.CustomUserAuth',
     'django.contrib.auth.backends.ModelBackend',  # this is default
     'guardian.backends.ObjectPermissionBackend'
 ]
