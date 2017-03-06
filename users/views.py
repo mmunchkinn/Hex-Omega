@@ -103,4 +103,3 @@ def login_auth(request):
 
     else:
         return render(request, 'users/login.html', {'error': False})
-

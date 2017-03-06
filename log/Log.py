@@ -8,7 +8,7 @@ from users.models import MemberUser, LeaderUser, AdminUser
 #   2.  add a function to parse each line of a given log file and
 #       render them into a HTML structure for use in a view.
 
-def log(level, username, content, **kwargs):
+def log(level, user, content, **kwargs):
     """
     Log function.
     Call from any function or context with the required parameters to
@@ -16,7 +16,7 @@ def log(level, username, content, **kwargs):
     non-blocking IO but due to some constraints have reasoned otherwise.
 
     :param level: either: INFO, WARNING or SUCCESS
-    :param username: Username of user who called a function with log.
+    :param user: user who called a function with log.
     :param content: the path to the log
     :param kwargs: random kwargs to add to the log message.
     Will add implementation only if needed.
@@ -24,15 +24,23 @@ def log(level, username, content, **kwargs):
     """
     # the content attribute of the project has the entire
     # path from BASE_DIR(mentioned in settings.py).
-    l = MemberUser.objects.get(username__contains=username)
+    # l = MemberUser.objects.get(username__contains=username)
     # print(l.username)
+    level = None
+    if user.is_admin:
+        level = 'ADMIN'
+    elif user.is_leader:
+        level = 'LEADER'
+    else:
+        level = 'MEMBER'
 
     data = datetime.now().strftime('%A, %d. %B %Y %I:%M%p') + ' '
     # data += content
 
-    logfile = l.project.activitylog.content
+    logfile = user.project.activitylog.content
 
     if logfile is '':
         raise ValueError('Empty path to log file.')
     else:
-        print('[{}] [{}] [{}] [{}] [{}]'.format(level, l.username, l.project.name, data, content), file=open(logfile, 'w+'))
+        print('[{}] [{}] [{}] [{}] [{}] [{}]'.format('INFO', user.username, level, user.project.name, data, content),
+              file=open(logfile, 'w+'))

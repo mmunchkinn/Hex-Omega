@@ -42,12 +42,14 @@ class LogTest(TestCase):
         self.m.project_id = self.p.id
         self.m.save()
 
-        log('INFO', self.m.username, 'test content')
+        log('INFO', self.m, 'test content')
 
-    def test_log_contains_basic_info(self):
+    def test_log_contains_basic_info_member(self):
         logfile = open(self.p.activitylog.content, 'r').readlines()[0]
-        data = parse('[{}] [{}] [{}] [{}] [{}]', logfile)
+        data = parse('[{}] [{}] [{}] [{}] [{}] [{}]', logfile)
+        print(data)
         TestCase.assertEquals(self, data[0], 'INFO')
         TestCase.assertEquals(self, data[1], self.m.username)
-        TestCase.assertEquals(self, data[2], self.m.project.name)
-        TestCase.assertEquals(self, data[4], 'test content')
+        TestCase.assertEquals(self, data[2], 'MEMBER')
+        TestCase.assertEquals(self, data[3], self.m.project.name)
+        TestCase.assertEquals(self, data[5], 'test content')
