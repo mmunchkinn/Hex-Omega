@@ -1,6 +1,9 @@
 from users.models import *
 from datetime import datetime, timedelta
 
+import os
+from HexOmega.settings import BASE_DIR
+
 
 def setup():
     # Create role.
@@ -28,12 +31,16 @@ def setup():
     p.admins.add(adm)
     p.save()
 
+    # self.m.project.activitylog.content = self.p.activitylog.content
+    print('#####' + str(p.activitylog.content))
+
     # Create member
     m = MemberUser(username='theseus', first_name='theseus', last_name='demigod')
     m.set_password('qwerty123')
     m.role_id = r.id
     m.project_id = p.id
     m.save()
+    print('######' + str(m.project.activitylog.content))
 
 
 if __name__ == '__main__':

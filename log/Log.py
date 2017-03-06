@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from users.models import LeaderUser
+from users.models import MemberUser, LeaderUser, AdminUser
 
 
 # To do:
@@ -22,15 +22,17 @@ def log(level, username, content, **kwargs):
     Will add implementation only if needed.
     :return: None
     """
-    data = datetime.now().strftime('%A, %d. %B %Y %I:%M%p')
-    data += content
-
     # the content attribute of the project has the entire
     # path from BASE_DIR(mentioned in settings.py).
-    l = LeaderUser.objects.get(username__contains=username)
+    l = MemberUser.objects.get(username__contains=username)
+    # print(l.username)
+
+    data = datetime.now().strftime('%A, %d. %B %Y %I:%M%p') + ' '
+    # data += content
+
     logfile = l.project.activitylog.content
 
-    if logfile is None:
+    if logfile is '':
         raise ValueError('Empty path to log file.')
     else:
-        print('[{}] {}'.format(level, data), file=logfile)
+        print('[{}] [{}] [{}] [{}] [{}]'.format(level, l.username, l.project.name, data, content), file=open(logfile, 'w+'))

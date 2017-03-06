@@ -6,6 +6,9 @@ from django.dispatch import receiver
 from django.contrib.auth.models import PermissionsMixin
 from guardian.mixins import GuardianUserMixin
 
+import os
+from HexOmega.settings import BASE_DIR
+
 
 class User(AbstractUser, GuardianUserMixin):
     # username = models.CharField(max_length=30, primary_key=True)
@@ -116,7 +119,10 @@ class Project(models.Model):
 @receiver(post_save, sender=Project)
 def add_activitylog(sender, instance, created, **kwargs):
     if created:
-        ActivityLog.objects.create(title=instance.name, project=instance)
+        c = os.path.join(BASE_DIR,
+                                os.path.join('projects',
+                                             os.path.join(str(instance.name), 'activity.log')))
+        ActivityLog.objects.create(title=instance.name, project=instance, content=c)
 
 
 @receiver(post_save, sender=Project)
