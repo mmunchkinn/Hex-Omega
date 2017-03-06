@@ -26,13 +26,13 @@ def log(level, user, content, **kwargs):
     # path from BASE_DIR(mentioned in settings.py).
     # l = MemberUser.objects.get(username__contains=username)
     # print(l.username)
-    level = None
+    access_level = None
     if user.is_admin:
-        level = 'ADMIN'
+        access_level = 'ADMIN'
     elif user.is_leader:
-        level = 'LEADER'
+        access_level = 'LEADER'
     else:
-        level = 'MEMBER'
+        access_level = 'MEMBER'
 
     data = datetime.now().strftime('%A, %d. %B %Y %I:%M%p') + ' '
     # data += content
@@ -42,5 +42,8 @@ def log(level, user, content, **kwargs):
     if logfile is '':
         raise ValueError('Empty path to log file.')
     else:
-        print('[{}] [{}] [{}] [{}] [{}] [{}]'.format('INFO', user.username, level, user.project.name, data, content),
-              file=open(logfile, 'w+'))
+        f = open(logfile, 'a')
+        print('[{}] [{}] [{}] [{}] [{}] [{}]'.format(level, user.username, access_level, user.project.name, data, content),
+              file=f)
+        f.flush()
+        f.close()
