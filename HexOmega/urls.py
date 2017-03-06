@@ -22,4 +22,6 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^search-form/$', views.search_form),
     url(r'^search/$', views.search),
+    #url(r'^admin/add/$', views.CreateAdminView.as_view(), name='admin-add'),
+    url(r'^admin/add/$', views.add_admin_form),
 ]
