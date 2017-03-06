@@ -45,6 +45,10 @@ def index(request):
                   'users/index.html')
 
 
+def default_login_page(request):
+    return redirect('login_page', 0)
+
+
 def login_page(request, error):
     if error is '0':
         error = False
@@ -87,6 +91,7 @@ def login_auth(request):
         if user is not None:
             print('User [{}] is logging in.'.format(user.username))
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            request.session.set_expiry(300)
             return render(request,
                           'users/login_auth.html',
                           {'li': True,

@@ -12,6 +12,9 @@
         <p>
             <h3>Welcome {{ user.get_full_name }}</h3>
             <h4>Project: {{ user.project.name }}</h4>
+            <h4>is_admin: {{ user.is_admin }}</h4>
+            <h4>is_leader: {{ user.is_leader }}</h4>
+            <h4>is_member: {{ user.is_member }}</h4>
             <h4>Admin{{ user.project.admins.all|pluralize }}</h4>
             <ul>
                 {% for admin in user.project.admins.all %}
