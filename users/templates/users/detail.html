@@ -1,0 +1,8 @@
+{% block body %}
+    {% csrf_token %}
+    <label>Username: </label>{{ adminuser.username }} <br>
+    <label>First Name: </label>{{ adminuser.first_name }} <br>
+    <label>Last Name: </label>{{ adminuser.last_name }} <br>
+    <label>Email: </label>{{ adminuser.email }} <br>
+    <label>Bio: </label>{{ adminuser.bio }} <br>
+{% endblock %}

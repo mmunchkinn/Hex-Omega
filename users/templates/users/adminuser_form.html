@@ -1,5 +1,5 @@
-<form action="/first_name/" method="post">
-    {% csrf_token %}
-    {{ form }}
-    <input type="submit" value="Submit" />
+<form action="{% url 'add_admin' %}" method="post">
+    {% csrf_token%}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">Submit</button>
 </form>
