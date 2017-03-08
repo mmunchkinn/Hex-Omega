@@ -68,7 +68,7 @@
                         <a href="{% url 'index' %}#aboutus">About Us</a>
                     </li>
                     <li>
-                        <a href="{% url 'login_page' 0 %}">Login</a>
+                        <a href="{% url 'login_page' %}">Login</a>
                     </li>
                     
                 </ul>
@@ -84,9 +84,8 @@
       <!-- Main component for a primary marketing message or call to action -->
       <div class="jumbotron" style="text-align:centre">
      
-        <form class="form-signin" action="{% url 'login_auth' %}" method="post">
-        <!-- <form class="form-signin" action="" method="post"> -->
-            {% csrf_token %}
+        <!--<form class="form-signin" action="" method="post">
+         <form class="form-signin" action="" method="post">
         <h2 class="form-signin-heading">Please log in</h2>
         <label for="inputUserID" class="sr-only">User ID</label>
         <input type="text" id="inputUserID" class="form-control" placeholder="User ID" name="username" required autofocus>
@@ -97,12 +96,28 @@
             <input type="checkbox" value="remember-me"> Remember me
           </label>
         </div>
-            {% if error %}
-              <span style="color: red">The username or password is invalid.</span>
-            {% endif %}
-            {% if request.user.is_authenticated %}
-              <span style="color: red">{{ request.user.username }}</span>
-            {% endif %}
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Log in</button>
+      </form> -->
+      <form class="form-signin" action="" method="post">
+        {% csrf_token %}
+        {% if request.user.is_authenticated %}
+            <span style="color: red">{{ request.user.username }}</span>
+        {% endif %}
+        <h2 class="form-signin-heading">Please log in</h2>
+        <label for="inputUserID" class="sr-only">User ID</label>
+        <input type="text" id="inputUserID" class="form-control" placeholder="User ID" name="username" required autofocus>
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" id="inputPassword" class="form-control" placeholder="Password" name="password" required>
+        <div class="checkbox">
+          <label>
+            <input type="checkbox" value="remember-me" name="rem"> Remember me
+          </label>
+        </div>
+        {% if errors %}
+            {% for e, ev in errors.items %}
+                <span style="color: red">{{ ev }}</span>
+            {% endfor %}
+        {% endif %}
         <button class="btn btn-lg btn-primary btn-block" type="submit">Log in</button>
       </form>
  

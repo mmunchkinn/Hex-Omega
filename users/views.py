@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
 
 from django.contrib.auth.models import Group
 
-from .models import Project, ActivityLog, ActionList, User, AdminUser, MemberUser, LeaderUser
+from .models import Project, AdminUser, MemberUser, LeaderUser
 from .backends import CustomUserAuth
+from .login_form import LoginForm
 
 """
     These views are only for testing the models, and their access
@@ -45,61 +47,69 @@ def index(request):
                   'users/index.html')
 
 
-def default_login_page(request):
-    return redirect('login_page', 0)
-
-
-def login_page(request, error):
-    if error is '0':
-        error = False
-    else:
-        error = True
-
-    # if request.user.is_authenticated():
-    #     return redirect('login_auth')
-
-    return render(request,
-                  'users/login.html',
-                  {'error': error,
-                   'request': request})
-
-
-def login_auth(request):
+def login_auth_2(request):
     """
-    Hmmm.... most of it is working. THe only qualm right now
-    is if a logged in user returns to login page, and previously had
-    a wrong login attempt, it continues to show the error message.
+    Login page authentication using django forms.
+    If easier and simpler, implement this else the
+    stuff I threw together up there.
     :param request:
     :return:
     """
-    # if request.user.is_authenticated():
-    #     return render(request,
-    #                   'users/login_auth.html',
-    #                   {'li': True,
-    #                    'user': request.user})
+    if request.user.is_authenticated():
+        return redirect('user_logged_in', request.user.username)
 
     if request.method == 'POST':
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-        user = CustomUserAuth().authenticate(username=username, password=password)
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = request.POST.get('username')
+            password = request.POST.get('password')
+            rem = request.POST.get('rem')
+            user = CustomUserAuth().authenticate(username=username, password=password)
 
-        if user is False:
-            # return render(request, 'users/login.html', {'error': True})
-            return redirect('login_page', 1)
+            if user is False:
+                form.errors['password'] = 'The username or password is incorrect.'
+                return render(request,
+                              'users/login.html',
+                              {
+                                  'form': form,
+                                  'errors': form.errors
+                              })
 
-        # print(user.username, user.get_full_name(), user.password, user.has_usable_password(), user.__class__)
-        if user is not None:
-            print('User [{}] is logging in.'.format(user.username))
-            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
-            request.session.set_expiry(300)
-            return render(request,
-                          'users/login_auth.html',
-                          {'li': True,
-                           'user': user})
-            # else:
-            #     return render(request,
-            #                   'users/login_auth.html',
-            #                   {'li': False})
+            if user is not None:
+                print('User [{}] is logging in.'.format(user.username))
+                login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+                if rem is not None:
+                    request.session.set_expiry(7200)
+                else:
+                    request.session.get_expire_at_browser_close()
+                return redirect('user_logged_in', username=username)
 
     else:
-        return render(request, 'users/login.html', {'error': False})
+        form = LoginForm()
+
+    return render(request, 'users/login.html', {'form': form})
+
+
+@login_required
+def logged_in(request, username):
+    if AdminUser.objects.filter(username__exact=username).count() == 1:
+        user = AdminUser.objects.get(username__exact=username)
+    elif LeaderUser.objects.filter(username__exact=username).count() == 1:
+        user = LeaderUser.objects.get(username__exact=username)
+    else:
+        user = MemberUser.objects.get(username__exact=username)
+
+    # fix it properly later
+    # this is to just test the new functions
+    return render(request,
+                  'users/admin_logged_in.html',
+                  {'li': True,
+                   'user': user})
+
+
+@login_required
+def jump_ship(request):
+    print('jumping ship....')
+    logout(request)
+    return redirect('login_page')
+

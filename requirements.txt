@@ -4,3 +4,4 @@ whitenoise
 django-guardian
 django-annoying
 parse
+yattag

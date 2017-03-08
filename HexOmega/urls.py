@@ -17,10 +17,12 @@ from django.conf.urls import url, include
 from django.contrib import admin
 
 import users.urls
+import log.urls
 from users import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'', include(users.urls)),
+    url(r'^log/', include(log.urls)),
     url(r'^search/$', views.search),
 ]
