@@ -24,4 +24,6 @@ urlpatterns = [
     url(r'^username/add/$', views.CreateAdminView.as_view(), name='add_admin'),
     url(r'^username/update/(?P<pk>[0-9]+)/$', views.UpdateAdmin.as_view(), name='update_admin'),
     url(r'^username/detail/(?P<pk>[0-9]+)/', views.DisplayAdminView.as_view(), name='admin_detail'),
+    url(r'^leader/add/$', views.add_member, name='add_member'),
+    url(r'^leader/(?P<pk>\d+)/$', views.DisplayMemberDetail.as_view(), name='member_detail'),
 ]

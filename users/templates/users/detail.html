@@ -1,8 +1,15 @@
-{% block body %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ adminuser.first_name }} {{ adminuser.last_name }}</title>
+</head>
+<body>
     {% csrf_token %}
-    <label>Username: </label>{{ adminuser.username }} <br>
-    <label>First Name: </label>{{ adminuser.first_name }} <br>
-    <label>Last Name: </label>{{ adminuser.last_name }} <br>
-    <label>Email: </label>{{ adminuser.email }} <br>
-    <label>Bio: </label>{{ adminuser.bio }} <br>
-{% endblock %}
+    <h4>Username: {{ adminuser.username }}</h4>
+    <h4>First Name: {{ adminuser.first_name }}</h4>
+    <h4>Last Name: {{ adminuser.last_name }}</h4>
+    <h4>Email: {{ adminuser.email }}</h4>
+    <h4>Bio: {{ adminuser.bio }}</h4>
+</body>
+</html>

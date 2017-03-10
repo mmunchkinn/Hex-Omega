@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ memberuser.first_name }} {{ memberuser.last_name }}</title>
+</head>
+<body>
+    {% csrf_token %}
+    <form action="" method="get">
+        <h4>Project ID: {{ memberuser.project_id }}</h4>
+        <h4>Username: {{ memberuser.username }}</h4>
+        <h4>First Name: {{ memberuser.first_name }}</h4>
+        <h4>Last Name: {{ memberuser.last_name }}</h4>
+        <h4>Email: {{ memberuser.email }}</h4>
+        <h4>Role ID: {{ memberuser.role_id }}</h4>
+        <h4>Bio: {{ memberuser.bio }}</h4>
+    </form>
+</body>
+</html>

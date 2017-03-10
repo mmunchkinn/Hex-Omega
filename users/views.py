@@ -3,7 +3,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.views import generic
 from django.views.generic.edit import CreateView, UpdateView
 from django.core.urlresolvers import reverse
-from .models import Project, ActivityLog, ActionList, AdminUser
+from .models import Project, ActivityLog, ActionList, AdminUser, MemberUser
+from .add_user_form import AddUserForm
 
 """
     These views are only for testing the models, and their access
@@ -51,3 +52,36 @@ class ProjectListView(generic.ListView):
 
     def get_queryset(self):
         return Project.objects.all().filter()
+
+
+def add_member(request):
+    """
+    Leader will create and add member into the project
+    :param request:
+    :return:
+    """
+    if request.method == 'POST':
+        form = AddUserForm(request.POST)
+        if form.is_valid():
+            project_id = request.POST.get('project_id')
+            username = request.POST.get('username')
+            first_name = request.POST.get('first_name')
+            last_name = request.POST.get('last_name')
+            email = request.POST.get('email')
+            password = request.POST.get('password')
+            role_id = request.POST.get('role_id')
+            bio = request.POST.get('bio')
+            user = MemberUser.objects.create_user(project_id= project_id, username=username, first_name=first_name, last_name=last_name, email=email, password=password, role_id=role_id, bio=bio)
+            user.save()
+            return redirect('member_detail', pk=user.pk)
+    else:
+        form = AddUserForm()
+    return render(request, 'users/add_member.html', {'form':form})
+
+
+class DisplayMemberDetail(generic.DetailView):
+    """
+    Display the member information
+    """
+    model = MemberUser
+    template_name = 'users/member_detail.html'
