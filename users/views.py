@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.views import generic
 from django.views.generic.edit import CreateView, UpdateView
 from django.core.urlresolvers import reverse
-from .models import Project, ActivityLog, ActionList, AdminUser, MemberUser
+from .models import Project, ActivityLog, ActionList, AdminUser, LeaderUser, MemberUser
 from .add_user_form import AddUserForm
 
 """
@@ -52,6 +52,21 @@ class ProjectListView(generic.ListView):
 
     def get_queryset(self):
         return Project.objects.all().filter()
+
+
+class CreateLeaderView(CreateView):
+
+    model = LeaderUser
+    fields = ['username', 'first_name', 'last_name', 'email', 'password', 'bio']
+
+    def get_success_url(self):
+        return reverse('leader_detail', kwargs={'pk': self.object.pk})
+
+
+class DisplayLeaderView(generic.DetailView):
+
+    model = LeaderUser
+    template_name = 'users/leaderDetail.html'
 
 
 def add_member(request):
