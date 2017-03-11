@@ -3,21 +3,30 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.contrib.auth.models import PermissionsMixin
 from guardian.mixins import GuardianUserMixin
+
+import os
+from HexOmega.settings import BASE_DIR
 
 
 class User(AbstractUser, GuardianUserMixin):
+    # username = models.CharField(max_length=30, primary_key=True)
     bio = models.TextField(max_length=500, blank=True)
+    is_admin = False
+    is_leader = False
+    is_member = False
 
     def __str__(self):
         return self.get_full_name()
 
 
-class AdminUser(User):
+class AdminUser(User, PermissionsMixin):
     """
     Class that hold data for every admin level user.
     Most of the fields are inherited from AbstractUser.
     """
+    is_admin = True
 
     class Meta:
         db_table = 'AdminUser'
@@ -45,7 +54,9 @@ def add_admin_to_group(sender, **kwargs):
         admin_group.user_set.add(kwargs.get('instance'))
 
 
-class LeaderUser(User):
+class LeaderUser(User, PermissionsMixin):
+    is_leader = True
+
     class Meta:
         db_table = 'Leader'
         permissions = (
@@ -108,7 +119,10 @@ class Project(models.Model):
 @receiver(post_save, sender=Project)
 def add_activitylog(sender, instance, created, **kwargs):
     if created:
-        ActivityLog.objects.create(title=instance.name, project=instance)
+        c = os.path.join(BASE_DIR,
+                                os.path.join('projects',
+                                             os.path.join(str(instance.name), 'activity.log')))
+        ActivityLog.objects.create(title=instance.name, project=instance, content=c)
 
 
 @receiver(post_save, sender=Project)
@@ -177,9 +191,10 @@ class ActivityLog(models.Model):
         db_table = 'ActivityLog'
 
 
-class MemberUser(User):
+class MemberUser(User, PermissionsMixin):
     role = models.ForeignKey(Role, models.DO_NOTHING)
     project = models.ForeignKey(Project, models.DO_NOTHING)
+    is_member = True
 
     class Meta:
         db_table = 'Member'
@@ -188,19 +203,19 @@ class MemberUser(User):
         )
 
 
-@receiver(post_save, sender=MemberUser)
-def add_member_to_group(sender, **kwargs):
-    """
-    Runs as soon as any MemberUser object is saved.
-    Creates/adds to the member group and permissions are given
-    to the member group.
-
-    :param sender: MemberUser
-    :param kwargs: list of essential arguments
-    :return: None
-    """
-    member_group, created = Group.objects.get_or_create(name='member_group')
-    if created:
-        pass
-    if kwargs['instance'].username != 'AnonymousUser':
-        member_group.user_set.add(kwargs.get('instance'))
+# @receiver(post_save, sender=MemberUser)
+# def add_member_to_group(sender, instance, created, **kwargs):
+#     """
+#     Runs as soon as any MemberUser object is saved.
+#     Creates/adds to the member group and permissions are given
+#     to the member group.
+#
+#     :param created:
+#     :param instance: instance of member user
+#     :param sender: MemberUser
+#     :param kwargs: list of essential arguments
+#     :return: None
+#     """
+#     if created and instance.username != 'AnonymousUser':
+#         # member_group.user_set.add(kwargs.get('instance'))
+#         instance.groups.add(Group.objects.get_or_create(name='member_group'))

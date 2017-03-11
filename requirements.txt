@@ -2,3 +2,6 @@ django
 mysqlclient
 whitenoise
 django-guardian
+django-annoying
+parse
+yattag
