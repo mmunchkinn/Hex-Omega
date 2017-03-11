@@ -10,5 +10,5 @@ urlpatterns = [
     # url(r'^login_auth/$', views.login_auth, name="login_auth"),
     url(r'^login/$', views.login_auth_2, name='login_page'),
     url(r'^logout/$', views.jump_ship, name='jump_ship'),
-    url(r'^user/(?P<username>[a-zA-Z0-9]{7,9})/$', views.logged_in, name="user_logged_in"),
+    url(r'^user/(?P<username>[a-zA-Z0-9_]{7,9})/$', views.logged_in, name="user_logged_in"),
 ]
