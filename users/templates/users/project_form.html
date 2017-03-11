@@ -1,0 +1,5 @@
+<form action="{% url 'create_project' %}" method="post">
+    {% csrf_token%}
+    {{form.as_p}}
+    <button type="submit" class="btn btn-success">Create</button>
+</form>

@@ -14,7 +14,8 @@ html {
 }
 
 body {
-    margin: 0;background-color: #252830
+    margin: 0;background-color: #252830;
+    font-family: 'robotoregular',"Helvetica Neue",Arial,sans-serif;
 }
 
 article,
@@ -1391,7 +1392,7 @@ html {
 }
 
 body {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: 'robotoregular',"Helvetica Neue",Arial,sans-serif;
     font-size: 14px;
     line-height: 1.42857143;
     color: #FFF;

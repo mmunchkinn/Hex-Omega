@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.views import generic
@@ -10,6 +10,40 @@ from .add_user_form import AddUserForm
 from .models import Project, AdminUser, MemberUser, LeaderUser
 from .backends import CustomUserAuth
 from .login_form import LoginForm
+
+
+def get_current_path(request):
+    return {
+       'current_path': request.get_full_path()
+     }
+
+
+def url_context(view_func):
+    def _view(request, *args, **kwargs):
+        if request.user.is_admin():
+            return HttpResponseRedirect({{get_current_path(request)}})
+
+        elif request.user.is_leader():
+            if {{get_current_path(request)}}.__contains__(AdminUser.username):
+                    print('You are not allowed to view the admin contend!!')
+            else:
+                return HttpResponseRedirect({{get_current_path(request)}})
+
+        elif request.user.is_member():
+            if  {{get_current_path()}}.__contains__(AdminUser.username):
+                print('You are not allowed to view the admin content!!')
+            elif {{get_current_path()}}.__contains__(LeaderUser.username):
+                print('You are not allowed to view the leader content!!')
+            else:
+                return HttpResponseRedirect({{get_current_path(request)}})
+        else:
+            return view_func(request, *args, **kwargs)
+
+        _view.__name__ = view_func.__name__
+        _view.__dict__ = view_func.__dict__
+        _view.__doc__ = view_func.__doc__
+
+    return _view
 
 """
     These views are only for testing the models, and their access
@@ -125,6 +159,7 @@ class CreateAdminView(CreateView):
     model = AdminUser
     fields = ['username', 'first_name', 'last_name', 'email', 'password', 'bio']
 
+    #@url_context
     def get_success_url(self):
         return reverse('admin_detail', kwargs={'pk': self.object.pk})
 
@@ -145,6 +180,7 @@ class UpdateAdmin(UpdateView):
     fields = ['first_name', 'last_name', 'email', 'bio']
     template_name = 'users/update_admin.html'
 
+    #@url_context
     def get_success_url(self):
         return reverse('admin_detail', kwargs={'pk': self.object.pk})
 
@@ -159,11 +195,27 @@ class ProjectListView(generic.ListView):
         return Project.objects.all().filter()
 
 
+class CreateProjectView(generic.CreateView):
+
+    model = Project
+    fields = ['name', 'status', 'start_date', 'end_date', 'description', 'leader']
+
+    def get_success_url(self):
+        return reverse('project_detail', kwargs={'pk': self.object.pk})
+
+
+class DisplayProjectView(generic.DetailView):
+
+    model = Project
+    template_name = 'users/projectDetail.html'
+
+
 class CreateLeaderView(CreateView):
 
     model = LeaderUser
     fields = ['username', 'first_name', 'last_name', 'email', 'password', 'bio']
 
+    #@url_context
     def get_success_url(self):
         return reverse('leader_detail', kwargs={'pk': self.object.pk})
 
@@ -192,11 +244,12 @@ def add_member(request):
             role_id = request.POST.get('role_id')
             bio = request.POST.get('bio')
             user = MemberUser.objects.create_user(project_id= project_id, username=username, first_name=first_name, last_name=last_name, email=email, password=password, role_id=role_id, bio=bio)
+            #user.set_password(password)
             user.save()
             return redirect('member_detail', pk=user.pk)
     else:
         form = AddUserForm()
-    return render(request, 'users/add_member.html', {'form':form})
+    return render(request, 'users/add_member.html', {'form': form})
 
 
 class DisplayMemberDetail(generic.DetailView):

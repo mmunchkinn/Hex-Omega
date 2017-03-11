@@ -1,0 +1,9 @@
+{% block body %}
+    {% csrf_token %}
+    <label>Project name: </label>{{ project.name }} <br>
+    <label>Status: </label>{{ project.status }} <br>
+    <label>Start Date: </label>{{ project.start_date }} <br>
+    <label>End Date: </label>{{ project.end_date }} <br>
+    <label>Description: </label>{{ project.description }} <br>
+    <label>Leader: </label>{{ project.leader }} <br>
+{% endblock %}
