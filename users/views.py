@@ -249,7 +249,7 @@ def add_member(request):
             return redirect('member_detail', pk=user.pk)
     else:
         form = AddUserForm()
-    return render(request, 'users/add_member.html', {'form': form})
+    return render(request, 'users/memberuser_form.html', {'form': form})
 
 
 class DisplayMemberDetail(generic.DetailView):
