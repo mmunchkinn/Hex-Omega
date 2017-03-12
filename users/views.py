@@ -244,7 +244,7 @@ def add_member(request):
             role_id = request.POST.get('role_id')
             bio = request.POST.get('bio')
             user = MemberUser.objects.create_user(project_id= project_id, username=username, first_name=first_name, last_name=last_name, email=email, password=password, role_id=role_id, bio=bio)
-            #user.set_password(password)
+            user.set_password(password)
             user.save()
             return redirect('member_detail', pk=user.pk)
     else:
