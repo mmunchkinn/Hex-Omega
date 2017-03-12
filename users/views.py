@@ -7,6 +7,7 @@ from django.views.generic.edit import CreateView, UpdateView
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import Group
 from .add_user_form import AddUserForm
+from .add_admin_form import AddAdminUserForm
 from .models import Project, AdminUser, MemberUser, LeaderUser
 from .backends import CustomUserAuth
 from .login_form import LoginForm
@@ -162,6 +163,35 @@ class CreateAdminView(CreateView):
     #@url_context
     def get_success_url(self):
         return reverse('admin_detail', kwargs={'pk': self.object.pk})
+
+
+def create_admin_user(request):
+    """
+    username/add/$
+    :param request:
+    :return:
+    """
+    if request.method == 'POST':
+        form = AddAdminUserForm(request.POST)
+        if form.is_valid():
+            username = request.POST.get('username')
+            first_name = request.POST.get('first_name')
+            last_name = request.POST.get('last_name')
+            email = request.POST.get('email')
+            password = request.POST.get('password')
+            bio = request.POST.get('bio')
+            user = AdminUser.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, bio=bio)
+            user.set_password(password)
+            user.save()
+            return redirect('thanks')
+    else:
+        form = AddUserForm()
+    return render(request, 'users/adminuser_form.html', {'form': form})
+
+
+def get_admin_detail(request, pk):
+    user = AdminUser.objects.get(pk=pk)
+    return render(request, 'users/detail.html', {'user': user})
 
 
 class DisplayAdminView(generic.DetailView):

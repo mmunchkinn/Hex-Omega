@@ -6,7 +6,7 @@
 </head>
 <body>
     {% csrf_token %}
-    <form action="" method="get">
+    <form action="{% url 'member_detail' %}" method="get">
         <h4>Project ID: {{ memberuser.project_id }}</h4>
         <h4>Username: {{ memberuser.username }}</h4>
         <h4>First Name: {{ memberuser.first_name }}</h4>
