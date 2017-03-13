@@ -27,10 +27,16 @@ class parse_log(object):
                 k = 'warning-class'
             else:
                 k = 'success-class'
+            # if data[0] == 'INFO':
+            #     k = 'panel panel-info'
+            # elif data[0] == 'WARNING':
+            #     k = 'panel panel-warning'
+            # else:
+            #     k = 'panel panel-warning'
 
             with tag('div', klass=k):
-                with tag('h4'):
-                    text(data[0])
+                # with tag('h4'):
+                #     text(data[0])
                 with tag('b'):
                     text(data[1] + ' ')
                 with tag('i'):

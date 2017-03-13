@@ -1,13 +1,14 @@
 <!doctype html>
 <html lang="en">
 <head>
-	{% load static %}
-
+		{% load static %}
+		{% load i18n%}
 	<meta charset="utf-8" />
-	<link rel="icon" type="image/png" href="{% static 'users/assets/img/favicon.ico' %}">
+	<link rel="icon" type="image/png" href="{% static 'users/img/favicon.ico'%}">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
 
 	<title>{{ user.username }} | Home</title>
+
 
 	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
     <meta name="viewport" content="width=device-width" />
@@ -24,32 +25,30 @@
 
     <link href="{% static 'users/css/style.css' %}" rel="stylesheet" />
     <!--     Fonts and icons     -->
-   
+
     <link href="{% static 'users/css/pe-icon-7-stroke.css' %}" rel="stylesheet" />
 
-    <style>
+	    <style>
         @import url('https://fonts.googleapis.com/css?family=Raleway');
         body {
-            font-family: 'Raleway';
-        }
+            font-family: 'Raleway', serif;
+            }
     </style>
-
 </head>
 <body>
 
 <div class="wrapper">
-    <div class="sidebar" data-color="black" data-image="{% static 'users/img/sidebar-4.jpg'%}">
+    <div class="sidebar" data-color="black" data-image="{% static 'users/img/sidebar-4.jpg' %}">
 
     	<div class="sidebar-wrapper">
             <div class="logo">
-                
-                <a href= "{% url 'index' %}" class="simple-text">
+                 <a href= "{% url 'index' %}" class="simple-text">
                     <img src="{% static 'users/img/core_omega.png' %}" style="width:50px;">
                 </a>
             </div>
 
-        {% block navi_content %}
-		{% endblock %}
+			{% block navi_content %}
+		    {% endblock %}
     	</div>
     </div>
 
@@ -63,24 +62,35 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <p><a class="navbar-brand" href="#">Dashboard</a></p>
+                    <p><a class="navbar-brand" href="#">Home</a></p>
                 </div>
                 <div class="collapse navbar-collapse" id="navbar2">
-                   {% block usernavi_content %}
-		           {% endblock %}
+                       {% block usernavi_content %}
+		               {% endblock %}
                 </div>
             </div>
         </nav>
 
+
         <div class="content">
             <div class="container-fluid">
-				{% block main_content %}
-				{% endblock %}
-                
+                <div class="row">
+
+			<div class="col-md-12">
+                        <div class="card">
+                            <div class="header">
+
+
+                            </div>
+								{% block main_content %}
+				                {% endblock %}
+                        </div>
             </div>
 
-
-        <footer class="footer">
+             </div>
+        </div>
+ </div>
+    <footer class="footer">
             <div class="container-fluid">
                 <nav class="pull-left">
                     <ul>
@@ -90,20 +100,21 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{% url 'index' %}#aboutus">
-                                About Us
-                            </a>
+                            <a href="{% url 'index' %}#aboutus">About Us</a>
                         </li>
-                        
+
                     </ul>
                 </nav>
-                <p class="copyright pull-right">
-                    &copy; {% now 'Y' %} <a href="{% url 'index' %}">HexOmega</a>
+                <div class="pull-right">
+                <p class="copyright">
+                    &copy;
+					{% now "Y" as current_year %}
+                    {% blocktrans %}Copyright {{ current_year }}{% endblocktrans %}
+					<a href="{% url 'index' %}">Hex Omega</a>
                 </p>
             </div>
+            </div>
         </footer>
-
-    </div>
 </div>
 
 
@@ -120,7 +131,8 @@
 	<script src="{% static 'users/js/chartist.min.js' %}"></script>
 
     <!--  Notifications Plugin    -->
-    <script src="{% static 'users/js/bootstrap-notify.js' %}"></script>
+    <script src="{%static 'users/js/bootstrap-notify.js' %}"></script>
+    <script src="{%static 'users/js/bootstrap-notify.js' %}"></script>
 
     
     <!-- Light Bootstrap Table Core javascript and methods for Demo purpose -->

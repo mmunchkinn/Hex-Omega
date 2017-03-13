@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+    {% load static %}
+    {% load i18n %}
+	<meta charset="utf-8" />
+	<link rel="icon" href="{% static "users/img/favicon.ico"%}">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+	<title>Admin - Users</title>
+
+	<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <meta name="viewport" content="width=device-width" />
+
+
+    <!-- Bootstrap core CSS     -->
+    <link href="{% static "users/css/bootstrap.min.css" %}" rel="stylesheet"/>
+
+    <!-- Animation library for notifications   -->
+    <link href=" {% static "users/css/animate.min.css" %}" rel="stylesheet"/>
+
+    <!--  Light Bootstrap Table core CSS    -->
+    <link href="{% static "users/css/light-bootstrap-dashboard.css" %}" rel="stylesheet"/>
+
+    <link href="{% static "users/css/style.css" %}" rel="stylesheet" />
+
+    <!--     Fonts and icons     -->
+    <link href="{% static "users/css/pe-icon-7-stroke.css" %}" rel="stylesheet" />
+
+</head>
+<body>
+
+<div class="wrapper">
+    <div class="sidebar" data-color="black" data-image="{% static "users/img/sidebar-4.jpg" %}">
+
+    	<div class="sidebar-wrapper">
+            <div class="logo">
+
+                <a href="{% url 'index' %}" class="simple-text">
+                    <img src="{% static "users/img/core_omega.png" %}" style="width:50px;">
+                </a>
+            </div>
+
+            <ul class="nav">
+                <li >
+                    <a href="admin.html">
+                        <i class="pe-7s-home"></i>
+                        <p>Home</p>
+                    </a>
+
+                </li>
+                <li class="active">
+                    <a href="user.html">
+                        <i class="pe-7s-user"></i>
+                        <p>Users</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="table.html"> <!-- ??? -->
+                        <i class="pe-7s-note2"></i>
+                        <p>Projects</p>
+                    </a>
+                </li>
+
+            </ul>
+    	</div>
+    </div>
+
+    <div class="main-panel">
+        <nav class="navbar navbar-default navbar-fixed">
+            <div class="container-fluid">
+                <div class="navbar-header" id="navbar1">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navigation-example-2">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <p><a class="navbar-brand" href="#">Users</a></p>
+                </div>
+                <div class="collapse navbar-collapse" id="navbar2">
+
+
+                    <ul class="nav navbar-nav navbar-right">
+
+                        <li class="dropdown">
+                              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <p>
+										Profile
+										<b class="caret"></b>
+									</p>
+                              </a>
+                              <ul class="dropdown-menu">
+                                <li><a href="{% url 'update_admin' user.username %}">Edit Profile</a></li>
+
+
+
+                              </ul>
+                        </li>
+                        <li>
+                            <a href="{% url 'jump_ship' %}">
+                                <p>Log out</p>
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+
+        <div class="content">
+            <div class="container-fluid">
+                <div class="row">
+
+<div class="col-md-12">
+                        <div class="card">
+                            <div class="header">
+                                <h4 class="title">Create User</h4>
+
+                            </div>
+
+
+
+                            <div class="content" >
+                                <form action="" method="post">
+                                    {% if form.errors %}
+                                        <!-- Error messaging -->
+                                        <div id="errors">
+                                            <div class="inner">
+                                                <p>There were some errors in the information you entered. Please correct the following:</p>
+                                                {{ form.non_field_errors }}
+                                                <ul>
+                                                    {% for field in form %}
+                                                        {% if field.errors %}<li>{{ field.label }}: {{ field.errors|striptags }}</li>{% endif %}
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <!-- /Error messaging -->
+                                    {% endif %}
+                                    {% csrf_token %}
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label >User ID</label>
+                                                <input type="text" class="form-control" placeholder="User ID" name="username">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label >First Name</label>
+                                                <input type="text" class="form-control" placeholder="First Name" name="first_name">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label >Last Name</label>
+                                                <input type="text" class="form-control" placeholder="Last Name" name="last_name">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="email">Email</label>
+                                                <input type="email" class="form-control" placeholder="Email" name="email">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label for="password">Password</label>
+                                                <input type="password" class="form-control" placeholder="Password" name="password">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label>Bio</label>
+                                                <textarea rows="5" class="form-control" placeholder="Description" name="bio"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                    <button type="submit" class="btn btn-info btn-fill btnleft">Create</button>
+                                    <button type="submit" class="btn btn-info btn-fill">Cancel</button>
+                                    <div class="clearfix"></div>
+                                </form>
+
+
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+            </div>
+        </div>
+
+
+
+
+    </div>
+
+    <footer class="footer">
+            <div class="container-fluid">
+                <nav class="pull-left">
+                    <ul>
+                        <li>
+                            <a href="index.html">
+                                Home
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{% url 'index' %}#aboutus">
+                                About Us
+                            </a>
+                        </li>
+
+                    </ul>
+                </nav>
+                <div class="pull-right">
+                <p class="copyright">
+                    &copy;
+					{% now "Y" as current_year %}
+                    {% blocktrans %} Copyright {{ current_year }} {% endblocktrans %}
+					<a href="{% url 'index' %}">Hex Omega</a>
+                </p>
+            </div>
+            </div>
+        </footer>
+</div>
+
+
+</body>
+
+    <!--   Core JS Files   -->
+    <script src="{% static "users/js/jquery-1.10.2.js"%}" type="text/javascript"></script>
+	<script src="{% static "users/js/bootstrap.min.js"%}" type="text/javascript"></script>
+
+	<!--  Checkbox, Radio & Switch Plugins -->
+	<script src="{% static "users/js/bootstrap-checkbox-radio-switch.js"%}"></script>
+
+	<!--  Charts Plugin -->
+	<script src="{% static "users/js/chartist.min.js"%}"></script>
+
+    <!--  Notifications Plugin    -->
+    <script src="{% static "users/js/bootstrap-notify.js"%}"></script>
+
+
+    <!-- Light Bootstrap Table Core javascript and methods for Demo purpose -->
+	<script src="{% static "users/js/light-bootstrap-dashboard.js"%}"></script>
+
+
+
+</html>

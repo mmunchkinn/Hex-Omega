@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 
 from django.contrib.auth.models import Group
@@ -94,13 +94,12 @@ def login_auth_2(request):
 def logged_in(request, username):
     if AdminUser.objects.filter(username__exact=username).count() == 1:
         user = AdminUser.objects.get(username__exact=username)
+        return redirect('display_admin', username)
     elif LeaderUser.objects.filter(username__exact=username).count() == 1:
         user = LeaderUser.objects.get(username__exact=username)
     else:
         user = MemberUser.objects.get(username__exact=username)
 
-    # fix it properly later
-    # this is to just test the new functions
     return render(request,
                   'users/admin_logged_in.html',
                   {'li': True,
