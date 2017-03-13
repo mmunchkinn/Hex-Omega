@@ -1,50 +1,16 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.views import generic
-from django.views.generic.edit import CreateView, UpdateView
+from django.views.generic.edit import UpdateView
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import Group
-from .add_user_form import AddUserForm
-from .add_admin_form import AddAdminUserForm
+from .add_user_form import AdminUserForm
 from .models import Project, AdminUser, MemberUser, LeaderUser
 from .backends import CustomUserAuth
 from .login_form import LoginForm
 
-
-def get_current_path(request):
-    return {
-       'current_path': request.get_full_path()
-     }
-
-
-def url_context(view_func):
-    def _view(request, *args, **kwargs):
-        if request.user.is_admin():
-            return HttpResponseRedirect({{get_current_path(request)}})
-
-        elif request.user.is_leader():
-            if {{get_current_path(request)}}.__contains__(AdminUser.username):
-                    print('You are not allowed to view the admin contend!!')
-            else:
-                return HttpResponseRedirect({{get_current_path(request)}})
-
-        elif request.user.is_member():
-            if  {{get_current_path()}}.__contains__(AdminUser.username):
-                print('You are not allowed to view the admin content!!')
-            elif {{get_current_path()}}.__contains__(LeaderUser.username):
-                print('You are not allowed to view the leader content!!')
-            else:
-                return HttpResponseRedirect({{get_current_path(request)}})
-        else:
-            return view_func(request, *args, **kwargs)
-
-        _view.__name__ = view_func.__name__
-        _view.__dict__ = view_func.__dict__
-        _view.__doc__ = view_func.__doc__
-
-    return _view
 
 """
     These views are only for testing the models, and their access
@@ -151,28 +117,19 @@ def jump_ship(request):
     return redirect('login_page')
 
 
-class CreateAdminView(CreateView):
-    """
-    Provides a form to indicate the new admin user's detail.
-    If the information indicated is valid, the page will be redirected.
-    The information of the newly created admin will be displayed.
-    """
-    model = AdminUser
-    fields = ['username', 'first_name', 'last_name', 'email', 'password', 'bio']
-
-    #@url_context
-    def get_success_url(self):
-        return reverse('admin_detail', kwargs={'pk': self.object.pk})
+# The following functions are done by Claudia
 
 
 def create_admin_user(request):
     """
+    Create an admin user.
     username/add/$
     :param request:
     :return:
     """
+    form = AdminUserForm();
     if request.method == 'POST':
-        form = AddAdminUserForm(request.POST)
+        form = AdminUserForm(request.POST)
         if form.is_valid():
             username = request.POST.get('username')
             first_name = request.POST.get('first_name')
@@ -183,108 +140,43 @@ def create_admin_user(request):
             user = AdminUser.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, bio=bio)
             user.set_password(password)
             user.save()
-            return redirect('thanks')
-    else:
-        form = AddUserForm()
+            return redirect('display_admin', pk=user.pk)
     return render(request, 'users/adminuser_form.html', {'form': form})
 
 
 def get_admin_detail(request, pk):
-    user = AdminUser.objects.get(pk=pk)
-    return render(request, 'users/detail.html', {'user': user})
-
-
-class DisplayAdminView(generic.DetailView):
     """
-    Display the information such as username, first name, last name, email and bio of the admin
-    """
-    model = AdminUser
-    template_name = 'users/detail.html'
-
-
-class UpdateAdmin(UpdateView):
-    """
-    Update the information of an admin.
-    """
-    model = AdminUser
-    fields = ['first_name', 'last_name', 'email', 'bio']
-    template_name = 'users/update_admin.html'
-
-    #@url_context
-    def get_success_url(self):
-        return reverse('admin_detail', kwargs={'pk': self.object.pk})
-
-
-class ProjectListView(generic.ListView):
-    """
-        work in progress - for admin to view the list of projects which have been modified
-    """
-    model = Project
-
-    def get_queryset(self):
-        return Project.objects.all().filter()
-
-
-class CreateProjectView(generic.CreateView):
-
-    model = Project
-    fields = ['name', 'status', 'start_date', 'end_date', 'description', 'leader']
-
-    def get_success_url(self):
-        return reverse('project_detail', kwargs={'pk': self.object.pk})
-
-
-class DisplayProjectView(generic.DetailView):
-
-    model = Project
-    template_name = 'users/projectDetail.html'
-
-
-class CreateLeaderView(CreateView):
-
-    model = LeaderUser
-    fields = ['username', 'first_name', 'last_name', 'email', 'password', 'bio']
-
-    #@url_context
-    def get_success_url(self):
-        return reverse('leader_detail', kwargs={'pk': self.object.pk})
-
-
-class DisplayLeaderView(generic.DetailView):
-
-    model = LeaderUser
-    template_name = 'users/leaderDetail.html'
-
-
-def add_member(request):
-    """
-    Leader will create and add member into the project
+    Display the information of an admin user
+    username/detail/(?P<pk>\d+)/
     :param request:
+    :param pk:
     :return:
     """
+    user = AdminUser.objects.get(pk=pk)
+    return render(request, 'users/user_information.html', {'adminuser': user})
+
+
+def update_admin_detail(request, pk):
+    """
+    Update the information of an admin user
+    username/update/(?P<pk>\d+)/
+    :param request:
+    :param pk:
+    :return:
+    """
+    user = AdminUser.objects.get(pk=pk)
+    form_data = {'username': user.username, 'first_name': user.first_name, 'last_name': user.last_name, 'email': user.email,
+                 'password': user.password, 'bio': user.bio}
+    form = AdminUserForm(request.POST, initial=form_data)
     if request.method == 'POST':
-        form = AddUserForm(request.POST)
+        print(form.errors)
         if form.is_valid():
-            project_id = request.POST.get('project_id')
-            username = request.POST.get('username')
-            first_name = request.POST.get('first_name')
-            last_name = request.POST.get('last_name')
-            email = request.POST.get('email')
-            password = request.POST.get('password')
-            role_id = request.POST.get('role_id')
-            bio = request.POST.get('bio')
-            user = MemberUser.objects.create_user(project_id= project_id, username=username, first_name=first_name, last_name=last_name, email=email, password=password, role_id=role_id, bio=bio)
-            user.set_password(password)
+            user.username = request.POST.get('username')
+            user.first_name = request.POST.get('first_name')
+            user.last_name = request.POST.get('last_name')
+            user.email = request.POST.get('email')
+            user.password = request.POST.get('password')
+            user.bio = request.POST.get('bio')
             user.save()
-            return redirect('member_detail', pk=user.pk)
-    else:
-        form = AddUserForm()
-    return render(request, 'users/memberuser_form.html', {'form': form})
-
-
-class DisplayMemberDetail(generic.DetailView):
-    """
-    Display the member information
-    """
-    model = MemberUser
-    template_name = 'users/member_detail.html'
+            return redirect('display_admin', pk=user.pk)
+    return render(request, 'users/update_admin_form.html', {'adminuser': user, 'form': form})

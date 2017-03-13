@@ -1,0 +1,63 @@
+{%extends "users/base.html" %}
+ {% block navi_content %}
+		 <ul class="nav">
+                <li class="active">
+                    <a href="{% url 'index' %}">
+                        <i class="pe-7s-home"></i>
+                        <p>Home</p>
+                    </a>
+
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="pe-7s-user"></i>
+                        <p>Users</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="pe-7s-note2"></i>
+                        <p>Projects</p>
+                    </a>
+                </li>
+
+            </ul>
+{% endblock %}
+{% block usernavi_content %}
+		<ul class="nav navbar-nav navbar-right">
+
+                        <li class="dropdown">
+                              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <p>
+										Profile
+										<b class="caret"></b>
+									</p>
+                              </a>
+                              <ul class="dropdown-menu">
+                                <li><a href="#">Edit Profile</a></li>
+                                <li><a href="#">Change Password</a></li>
+
+                              </ul>
+                        </li>
+                        <li>
+                            <a href="{% url 'jump_ship' %}">
+                                <p>Log out</p>
+                            </a>
+                        </li>
+
+                    </ul>
+
+
+{% endblock %}
+
+{% block main_content %}
+
+
+	{% block title %}<h4>{{ adminuser.first_name }} {{ adminuser.last_name }} Information</h4>{% endblock %}
+	{% csrf_token %}
+    <label><b>Username: </b></label>{{ adminuser.username }} <br>
+    <label><b>First Name:</b> </label>{{ adminuser.first_name }} <br>
+    <label><b>Last Name: </b></label>{{ adminuser.last_name }} <br>
+    <label><b>Email: </b></label>{{ adminuser.email }} <br>
+    <label><b>Bio: </b></label>{{ adminuser.bio }} <br>
+{% endblock %}
