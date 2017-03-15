@@ -16,9 +16,6 @@ def test(request):
         text('PMT')
 
     p = parse_log(proj)
-
-    for l in p.test():
-        print(l)
     return render(request, 'log/test.html',
                   {'log_data': p.test(),
                    'project_title': doc.getvalue(),

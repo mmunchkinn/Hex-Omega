@@ -58,7 +58,7 @@
 {% block main_content %}
 	{% csrf_token %}
 						<div class="header">
-                                <h4 class="title">{{ adminuser.get_full_name }}'s Information</h4>
+                                <h4 class="title">{{ adminuser.first_name }} {{ adminuser.last_name }}'s Information</h4>
                         </div>
 	
 	                        <div class="col-md-6">
@@ -69,7 +69,7 @@
                                     <tbody>
                                         <tr> 
                                             <td class="col-xs-3">User Name</td>
-                                            <td>{{ adminuser.username }}</td>
+                                            <td>{{ adminuser.username }}</td> 
                                         </tr>
                                         <tr> 
                                             <td>First Name</td>

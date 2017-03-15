@@ -37,7 +37,7 @@ class parse_log(object):
             with tag('div', klass=k):
                 # with tag('h4'):
                 #     text(data[0])
-                with tag('b'):
+                with tag('span', klass='username'):
                     text(data[1] + ' ')
                 with tag('i'):
                     text(data[4] + ' ')

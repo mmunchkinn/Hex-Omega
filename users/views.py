@@ -93,7 +93,6 @@ def login_auth_2(request):
 @login_required
 def logged_in(request, username):
     if AdminUser.objects.filter(username__exact=username).count() == 1:
-        user = AdminUser.objects.get(username__exact=username)
         return redirect('display_admin', username)
     elif LeaderUser.objects.filter(username__exact=username).count() == 1:
         user = LeaderUser.objects.get(username__exact=username)
