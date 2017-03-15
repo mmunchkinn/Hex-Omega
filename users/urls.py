@@ -12,7 +12,7 @@ urlpatterns = [
     url(r'^logout/$', views.jump_ship, name='jump_ship'),
     url(r'^user/(?P<username>[a-zA-Z0-9_]{7,9})/$', views.logged_in, name="user_logged_in"),
 
-    url(r'^username/add/$', views.create_admin_user, name='add_admin'),
-    url(r'^username/detail/(?P<pk>\d+)/', views.get_admin_detail, name='display_admin'),
-    url(r'^username/update/(?P<pk>\d+)/', views.update_admin_detail, name='update_admin'),
+    url(r"^admin_user/(?P<username>[a-zA-Z0-9_]{7,9})/add_admin/$", views.create_admin_user, name='add_admin'),
+    url(r"^admin_user/(?P<username>[a-zA-Z0-9_]{7,9})/details/$", views.get_admin_detail, name='display_admin'),
+    url(r"^admin_user/(?P<username>[a-zA-Z0-9_]{7,9})/update/$", views.update_admin_detail, name='update_admin'),
 ]

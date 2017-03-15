@@ -34,10 +34,15 @@
 									</p>
                               </a>
                               <ul class="dropdown-menu">
-                                <li><a href="#">Edit Profile</a></li>
-                                <li><a href="#">Change Password</a></li>
+                                <li><a href="{% url 'update_admin' user.username %}">Edit Profile</a></li>
+                                <!-- <li><a href="#">Change Password</a></li> -->
 
                               </ul>
+                        </li>
+                        <li>
+                            <a href="{% url 'add_admin' user.username %}">
+                                <p>Create Admin</p>
+                            </a>
                         </li>
                         <li>
                             <a href="{% url 'jump_ship' %}">

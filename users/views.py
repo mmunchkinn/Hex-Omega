@@ -1,12 +1,7 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect
-from django.contrib.auth import login, logout
+from django.shortcuts import render, redirect
+from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from django.views import generic
-from django.views.generic.edit import UpdateView
-from django.core.urlresolvers import reverse
-from django.contrib.auth.models import Group
-from .add_user_form import AdminUserForm
+from .add_user_form import AdminUserForm, AdminUpdateForm, PasswordForm
 from .models import Project, AdminUser, MemberUser, LeaderUser
 from .backends import CustomUserAuth
 from .login_form import LoginForm
@@ -97,6 +92,7 @@ def login_auth_2(request):
 def logged_in(request, username):
     if AdminUser.objects.filter(username__exact=username).count() == 1:
         user = AdminUser.objects.get(username__exact=username)
+        return redirect('display_admin', username)
     elif LeaderUser.objects.filter(username__exact=username).count() == 1:
         user = LeaderUser.objects.get(username__exact=username)
     else:
@@ -120,14 +116,16 @@ def jump_ship(request):
 # The following functions are done by Claudia
 
 
-def create_admin_user(request):
+@login_required
+def create_admin_user(request, username):
     """
     Create an admin user.
     username/add/$
+    :param username:
     :param request:
     :return:
     """
-    form = AdminUserForm();
+    form = AdminUserForm()
     if request.method == 'POST':
         form = AdminUserForm(request.POST)
         if form.is_valid():
@@ -137,46 +135,59 @@ def create_admin_user(request):
             email = request.POST.get('email')
             password = request.POST.get('password')
             bio = request.POST.get('bio')
-            user = AdminUser.objects.create_user(username=username, first_name=first_name, last_name=last_name, email=email, password=password, bio=bio)
+            user = AdminUser.objects.create_user(username=username, first_name=first_name, last_name=last_name,
+                                                 email=email, password=password, bio=bio)
             user.set_password(password)
             user.save()
-            return redirect('display_admin', pk=user.pk)
+            update_session_auth_hash(request, request.user)
+            return redirect('display_admin', request.user.username)
     return render(request, 'users/adminuser_form.html', {'form': form})
 
 
-def get_admin_detail(request, pk):
+@login_required
+def get_admin_detail(request, username):
     """
     Display the information of an admin user
-    username/detail/(?P<pk>\d+)/
     :param request:
-    :param pk:
     :return:
     """
-    user = AdminUser.objects.get(pk=pk)
+    user = AdminUser.objects.get(username__iexact=username)
     return render(request, 'users/user_information.html', {'adminuser': user})
 
 
-def update_admin_detail(request, pk):
+@login_required
+def update_admin_detail(request, username):
     """
     Update the information of an admin user
-    username/update/(?P<pk>\d+)/
     :param request:
-    :param pk:
+    :param username:
     :return:
     """
-    user = AdminUser.objects.get(pk=pk)
-    form_data = {'username': user.username, 'first_name': user.first_name, 'last_name': user.last_name, 'email': user.email,
-                 'password': user.password, 'bio': user.bio}
-    form = AdminUserForm(request.POST, initial=form_data)
+    user = AdminUser.objects.get(username__iexact=username)
+    form_data = {'first_name': user.first_name, 'last_name': user.last_name,
+                 'email': user.email, 'password': " ", 'bio': user.bio}
+    form = AdminUpdateForm(request.POST, initial=form_data)
+    # password_form = PasswordForm(request.POST)
     if request.method == 'POST':
         print(form.errors)
         if form.is_valid():
-            user.username = request.POST.get('username')
+            # user.username = request.POST.get('username')
             user.first_name = request.POST.get('first_name')
             user.last_name = request.POST.get('last_name')
             user.email = request.POST.get('email')
-            user.password = request.POST.get('password')
+            p = request.POST['password']
+            if (p is not '' or p is not None) and len(p.strip()) >= 8:
+                user.set_password(p)
             user.bio = request.POST.get('bio')
             user.save()
-            return redirect('display_admin', pk=user.pk)
-    return render(request, 'users/update_admin_form.html', {'adminuser': user, 'form': form})
+            update_session_auth_hash(request, request.user)
+            return redirect('display_admin', username)
+
+        # if password_form.is_valid():
+        #     p = request.POST.get('password')
+        #     if (p is not '' or p is not None) and len(p.strip()) >= 8:
+        #         user.set_password(p)
+        #         user.save()
+        #         update_session_auth_hash(request, request.user)
+
+    return render(request, 'users/update_admin_form.html', {'adminuser': user, 'form': form, 'errors': form.errors})
