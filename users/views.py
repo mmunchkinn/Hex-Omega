@@ -187,6 +187,7 @@ def update_admin_detail(request, username):
 def get_list_of_users(request):
     """
     Display a list of all users (admin, leader, member)
+    /list/
     :param request:
     :return:
     """
