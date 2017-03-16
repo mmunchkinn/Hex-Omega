@@ -15,4 +15,5 @@ urlpatterns = [
     url(r"^admin_user/(?P<username>[a-zA-Z0-9_]{7,9})/add_admin/$", views.create_admin_user, name='add_admin'),
     url(r"^admin_user/(?P<username>[a-zA-Z0-9_]{7,9})/details/$", views.get_admin_detail, name='display_admin'),
     url(r"^admin_user/(?P<username>[a-zA-Z0-9_]{7,9})/update/$", views.update_admin_detail, name='update_admin'),
+    url(r'^list/$', views.get_list_of_users, name='list_of_users'),
 ]

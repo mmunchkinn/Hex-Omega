@@ -1,0 +1,35 @@
+<h4>List of Admin</h4>
+<table summary="admin_user_list">
+    {% if admin_user_list %}
+        <tr><th>Username</th><th>First Name</th><th>Last Name</th><th>Email Address</th></tr>
+        {% for users in admin_user_list %}
+            <tr><td>{{ users.username }}</td><td>{{ users.first_name }}</td><td>{{ users.last_name }}</td><td>{{ users.email }}</td></tr>
+        {% endfor %}
+    {% else %}
+        <p>No admins have been created</p>
+    {% endif %}
+</table>
+
+<h4>List of Leader</h4>
+<table summary="leader_user_list">
+    {% if leader_user_list %}
+        <tr><th>Username</th><th>First Name</th><th>Last Name</th><th>Email Address</th></tr>
+        {% for users in leader_user_list %}
+            <tr><td>{{ users.username }}</td><td>{{ users.first_name }}</td><td>{{ users.last_name }}</td><td>{{ users.email }}</td></tr>
+        {% endfor %}
+    {% else %}
+        <p>No leaders have been created</p>
+    {% endif %}
+</table>
+
+<h4>List of Member</h4>
+<table summary="member_user_list">
+    {% if member_user_list %}
+        <tr><th>Username</th><th>First Name</th><th>Last Name</th><th>Email Address</th></tr>
+        {% for users in member_user_list %}
+            <tr><td>{{ users.username }}</td><td>{{ users.first_name }}</td><td>{{ users.last_name }}</td><td>{{ users.email }}</td></tr>
+        {% endfor %}
+    {% else %}
+        <p>No members have been created</p>
+    {% endif %}
+</table>

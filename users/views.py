@@ -167,11 +167,9 @@ def update_admin_detail(request, username):
     form_data = {'first_name': user.first_name, 'last_name': user.last_name,
                  'email': user.email, 'password': " ", 'bio': user.bio}
     form = AdminUpdateForm(request.POST, initial=form_data)
-    # password_form = PasswordForm(request.POST)
     if request.method == 'POST':
         print(form.errors)
         if form.is_valid():
-            # user.username = request.POST.get('username')
             user.first_name = request.POST.get('first_name')
             user.last_name = request.POST.get('last_name')
             user.email = request.POST.get('email')
@@ -183,11 +181,17 @@ def update_admin_detail(request, username):
             update_session_auth_hash(request, request.user)
             return redirect('display_admin', username)
 
-        # if password_form.is_valid():
-        #     p = request.POST.get('password')
-        #     if (p is not '' or p is not None) and len(p.strip()) >= 8:
-        #         user.set_password(p)
-        #         user.save()
-        #         update_session_auth_hash(request, request.user)
-
     return render(request, 'users/update_admin_form.html', {'adminuser': user, 'form': form, 'errors': form.errors})
+
+
+def get_list_of_users(request):
+    """
+    Display a list of all users (admin, leader, member)
+    :param request:
+    :return:
+    """
+    admin_user_list = AdminUser.objects.order_by('pk')[:5]
+    leader_user_list = LeaderUser.objects.order_by('pk')[:5]
+    member_user_list = MemberUser.objects.order_by('pk')[:5]
+    context = {'admin_user_list': admin_user_list, 'leader_user_list': leader_user_list, 'member_user_list': member_user_list}
+    return render(request, 'users/list_of_users.html', context)
