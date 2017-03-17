@@ -41,7 +41,8 @@ def get_admin_detail(request, username):
     user = AdminUser.objects.get(username__iexact=username)
     return render(request, 'users/user_information.html', {'adminuser': user})
 
-
+# abhi's test decorator : removed from repo
+# @viewing_context
 @login_required
 def update_admin_detail(request, username):
     """
@@ -50,6 +51,7 @@ def update_admin_detail(request, username):
     :param username:
     :return:
     """
+    print(username)
     user = AdminUser.objects.get(username__iexact=username)
     form_data = {'first_name': user.first_name, 'last_name': user.last_name,
                  'email': user.email, 'password': " ", 'bio': user.bio}

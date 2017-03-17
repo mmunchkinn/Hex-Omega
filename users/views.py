@@ -95,7 +95,7 @@ def logged_in(request, username):
     if AdminUser.objects.filter(username__exact=username).count() == 1:
         return redirect('display_admin', username)
     elif LeaderUser.objects.filter(username__exact=username).count() == 1:
-        user = LeaderUser.objects.get(username__exact=username)
+        return redirect('display_leader', username)
     else:
         user = MemberUser.objects.get(username__exact=username)
 
@@ -110,4 +110,3 @@ def jump_ship(request):
     print('jumping ship....')
     logout(request)
     return redirect('login_page')
-
