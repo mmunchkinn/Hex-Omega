@@ -34,14 +34,14 @@
 									</p>
                               </a>
                               <ul class="dropdown-menu">
-                                <li><a href="{% url 'update_admin' user.username %}">Edit Profile</a></li>
+                                <li><a href="{% url 'update_leader' leaderuser.username %}">Edit Profile</a></li>
                                 <!-- <li><a href="#">Change Password</a></li> -->
 
                               </ul>
                         </li>
                         <li>
-                            <a href="{% url 'add_admin' user.username %}">
-                                <p>Create Admin</p>
+                            <a href="{% url 'add_leader' leaderuser.username %}">
+                                <p>Create Leader</p>
                             </a>
                         </li>
                         <li>

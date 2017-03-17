@@ -24,12 +24,12 @@ def create_leader_user(request, username):
 
 
 def display_leader_detail(request, username):
-    user = LeaderUser.objects.get(username_iexact=username)
-    return render(request, 'users/leaderDetail.html', {'leaderuser': user})
+    user = LeaderUser.objects.get(username__iexact=username)
+    return render(request, 'users/leaderdetail.html', {'leaderuser': user})
 
 
 def update_leader_detail(request, username):
-    user = LeaderUser.objects.get(username_iexact=username)
+    user = LeaderUser.objects.get(username__iexact=username)
     form_data = {'username': user.username, 'first_name': user.first_name, 'last_name': user.last_name,
                  'email': user.email,
                  'password': user.password, 'bio': user.bio}
