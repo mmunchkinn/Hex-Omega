@@ -1,35 +1,185 @@
-<h4>List of Admin</h4>
-<table summary="admin_user_list">
-    {% if admin_user_list %}
-        <tr><th>Username</th><th>First Name</th><th>Last Name</th><th>Email Address</th></tr>
-        {% for users in admin_user_list %}
-            <tr><td>{{ users.username }}</td><td>{{ users.first_name }}</td><td>{{ users.last_name }}</td><td>{{ users.email }}</td></tr>
-        {% endfor %}
-    {% else %}
-        <p>No admins have been created</p>
-    {% endif %}
-</table>
+{%extends "users/base.html" %}
+ {% block navi_content %}
+ 
+		 <ul class="nav">
+                <li class="active">
+                    <a href="#">
+                        <i class="pe-7s-home"></i>
+                        <p>Home</p>
+                    </a>
 
-<h4>List of Leader</h4>
-<table summary="leader_user_list">
-    {% if leader_user_list %}
-        <tr><th>Username</th><th>First Name</th><th>Last Name</th><th>Email Address</th></tr>
-        {% for users in leader_user_list %}
-            <tr><td>{{ users.username }}</td><td>{{ users.first_name }}</td><td>{{ users.last_name }}</td><td>{{ users.email }}</td></tr>
-        {% endfor %}
-    {% else %}
-        <p>No leaders have been created</p>
-    {% endif %}
-</table>
+                </li>
+                <li>
+                    <a href="{% url 'list_of_users' user.username %}">
+                        <i class="pe-7s-user"></i>
+                        <p>Users</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="pe-7s-note2"></i>
+                        <p>Projects</p>
+                    </a>
+                </li>
+                
+            </ul>
+{% endblock %}
+{% block usernavi_content %}
+		<ul class="nav navbar-nav navbar-right">
+                        
+                        <li class="dropdown">
+                              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <p>
+										Profile
+										<b class="caret"></b>
+									</p>
+                              </a>
+                              <ul class="dropdown-menu">
+                                <li><a href="{% url 'update_admin' user.username %}">Edit Profile</a></li>
+                                    
+                              </ul>
+                        </li>
+                        <li>
+                            <a href="{% url 'jump_ship' %}">
+                                <p>Log out</p>
+                            </a>
+                        </li>
+						
+            </ul>
+		           
+				   
+{% endblock %}
+{% block main_content %}
+ <div class="content table-responsive table-full-width" >
+								<h4>List of Admin</h4>
+                                <table class="table table-hover table-striped" summary="admin_user_list">
+								{% if admin_user_list %}
+                                    <thead>
+                                        
+                                        <th>Username</th>
+                                        <th>First Name</th>
+										<th>Last Name</th>
+										<th>Email Address</th>
+										<th style="text-align:center">Edit</th>
+                                        <th style="text-align:center" >Delete</th>
+                                        
+                                    </thead>
+                                    <tbody>
+									{% for users in admin_user_list %}
+                                        <tr>
+                                            
+                                            <td><a href="{% url 'display_admin' users.username %}">{{ users.username }}</a></td>
+                                            <td>{{ users.first_name }}</td>
+                                            <td>{{ users.last_name }}</td>
+											<td>{{ users.email }}</td>
+											<td style="text-align:center">
+											<a href="{% url 'update_admin' users.username %}">
+                                            <div class="font-icon-detail"><i class="pe-7s-note"></i>
+											</div>
+											</a>
+                                            </td>
+											<td style="text-align:center">
+                                             
+                                            <div class="font-icon-detail"><i class="pe-7s-trash"></i>
+                                        
+                                            </div>
+                                            </td>
+                                            
+                                        </tr>
+								    {% endfor %}
+									</tbody>
+								{% else %}
+                                  <p>No admins have been created</p>
+                                {% endif %}
+                                </table>
+								
+								<h4>List of Leader</h4>
+								<table class="table table-hover table-striped" summary="leader_user_list">
+								{% if leader_user_list %}
+                                    <thead>
+                                        
+                                        <th>Username</th>
+                                        <th>First Name</th>
+										<th>Last Name</th>
+										<th>Email Address</th>
+										<th style="text-align:center">Edit</th>
+                                        <th style="text-align:center" >Delete</th>
+										
+                                        
+                                    </thead>
+                                    <tbody>
+									{% for users in leader_user_list %}
+                                        <tr>
+                                            
+                                            <td><a href="#">{{ users.username }}</a></td>
+                                            <td>{{ users.first_name }}</td>
+                                            <td>{{ users.last_name }}</td>
+											<td>{{ users.email }}</td>
+											<td style="text-align:center">
+											<a href="#">
+                                            <div class="font-icon-detail"><i class="pe-7s-note"></i>
+											</div>
+											</a>
+                                            </td>
+											
+											<td style="text-align:center">
+                                                
+                                            <div class="font-icon-detail"><i class="pe-7s-trash"></i>
+                                        
+                                            </div>
+                                            </td>
+											
+                                            
+                                        </tr>
+								    {% endfor %}
+									</tbody>
+								{% else %}
+                                  <p>No leaders have been created</p>
+                                {% endif %}
+                                </table>
+								
+								
+								<h4>List of Members</h4>
+								<table class="table table-hover table-striped" summary="member_user_list">
+								{% if member_user_list %}
+                                    <thead>
+                                        
+                                        <th>Username</th>
+                                        <th>First Name</th>
+										<th>Last Name</th>
+										<th>Email Address</th>
+										<th style="text-align:center">Edit</th>
+                                        <th style="text-align:center" >Delete</th>
+                                        
+                                    </thead>
+                                    <tbody>
+									{% for users in member_user_list %}
+                                        <tr>
+                                            
+                                            <td><a href="#">{{ users.username }}</a></td>
+                                            <td>{{ users.first_name }}</td>
+                                            <td>{{ users.last_name }}</td>
+											<td>{{ users.email }}</td>
+											<td style="text-align:center">
+											<a href="#">
+                                            <div class="font-icon-detail"><i class="pe-7s-note"></i>
+											</div>
+											</a>
+                                            </td>
+											<td style="text-align:center">
+                                                
+                                            <div class="font-icon-detail"><i class="pe-7s-trash"></i>
+                                        
+                                            </div>
+                                            </td>
+                                            
+                                        </tr>
+								    {% endfor %}
+									</tbody>
+								{% else %}
+                                  <p>No members have been created</p>
+                                {% endif %}
+                                </table>
 
-<h4>List of Member</h4>
-<table summary="member_user_list">
-    {% if member_user_list %}
-        <tr><th>Username</th><th>First Name</th><th>Last Name</th><th>Email Address</th></tr>
-        {% for users in member_user_list %}
-            <tr><td>{{ users.username }}</td><td>{{ users.first_name }}</td><td>{{ users.last_name }}</td><td>{{ users.email }}</td></tr>
-        {% endfor %}
-    {% else %}
-        <p>No members have been created</p>
-    {% endif %}
-</table>
+</div>
+{% endblock%}

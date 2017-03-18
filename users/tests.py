@@ -1,6 +1,6 @@
 from django.test import TestCase
 from users.models import AdminUser
-from users.add_user_form import AdminUserForm
+from users.user_form import AdminUserForm
 
 
 # Create your tests here.
@@ -10,9 +10,9 @@ class AdminModelTest(TestCase):
         test_user1.save()
 
     def test_first_name_label(self):
-        user = AdminUser.objects.get(pk=2)  # Get an object to test
-        field_label = user._meta.get_field('first_name').verbose_name  # Get the metadata for the required field
-        self.assertEquals(field_label, 'first name')  # Compare the value to the expected result
+        user = AdminUser.objects.get(pk=2)
+        field_label = user._meta.get_field('first_name').verbose_name
+        self.assertEquals(field_label, 'first name')
 
     def test_first_name_max_length(self):
         user = AdminUser.objects.get(pk=2)

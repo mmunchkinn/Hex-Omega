@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from .add_user_form import AdminUserForm, AdminUpdateForm, PasswordForm
+from .user_form import AdminUserForm, AdminUpdateForm, MemberUpdateForm
 from .models import Project, AdminUser, MemberUser, LeaderUser
 from .backends import CustomUserAuth
 from .login_form import LoginForm
@@ -141,7 +141,7 @@ def create_admin_user(request, username):
             user.save()
             update_session_auth_hash(request, request.user)
             return redirect('display_admin', request.user.username)
-    return render(request, 'users/adminuser_form.html', {'form': form})
+    return render(request, 'users/adminuser_form.html', {'form': form, 'errors': form.errors})
 
 
 @login_required
@@ -168,7 +168,6 @@ def update_admin_detail(request, username):
                  'email': user.email, 'password': " ", 'bio': user.bio}
     form = AdminUpdateForm(request.POST, initial=form_data)
     if request.method == 'POST':
-        print(form.errors)
         if form.is_valid():
             user.first_name = request.POST.get('first_name')
             user.last_name = request.POST.get('last_name')
@@ -184,15 +183,56 @@ def update_admin_detail(request, username):
     return render(request, 'users/update_admin_form.html', {'adminuser': user, 'form': form, 'errors': form.errors})
 
 
-def get_list_of_users(request):
+def get_list_of_users(request, username):
     """
     Display a list of all users (admin, leader, member)
     /list/
     :param request:
     :return:
     """
+    user = AdminUser.objects.get(username__iexact=username)
     admin_user_list = AdminUser.objects.order_by('pk')[:5]
     leader_user_list = LeaderUser.objects.order_by('pk')[:5]
     member_user_list = MemberUser.objects.order_by('pk')[:5]
     context = {'admin_user_list': admin_user_list, 'leader_user_list': leader_user_list, 'member_user_list': member_user_list}
-    return render(request, 'users/list_of_users.html', context)
+    return render(request, 'users/list_of_users.html', context, {'adminuser': user})
+
+
+@login_required
+def get_member_detail(request, username):
+    """
+    Display the information of a member user
+    :param request:
+    :param username:
+    :return:
+    """
+    user = MemberUser.objects.get(username__iexact=username)
+    return render(request, 'users/member_information.html', {'memberuser': user})
+
+
+@login_required
+def edit_member_information(request, username):
+    """
+    Update the information of a member user
+    :param request:
+    :param username:
+    :return:
+    """
+    user = MemberUser.objects.get(username__iexact=username)
+    form_data = {'first_name': user.first_name, 'last_name': user.last_name, 'email': user.email, 'password': " ", 'bio': user.bio}
+    form = MemberUpdateForm(request.POST, initial=form_data)
+    if request.method == 'POST':
+        print(form.errors)
+        if form.is_valid():
+            user.first_name = request.POST.get('first_name')
+            user.last_name = request.POST.get('last_name')
+            user.email = request.POST.get('email')
+            p = request.POST['password']
+            if (p is not '' or p is not None) and len(p.strip()) >= 8:
+                user.set_password(p)
+            user.bio = request.POST.get('bio')
+            user.save()
+            update_session_auth_hash(request, request.user)
+            return redirect('display_member', username)
+
+    return render(request, 'users/update_member_form.html', {'memberuser': user, 'form': form, 'errors': form.errors})
