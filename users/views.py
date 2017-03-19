@@ -5,7 +5,7 @@ from .user_form import AdminUserForm, AdminUpdateForm, MemberUpdateForm
 from .models import Project, AdminUser, MemberUser, LeaderUser
 from .backends import CustomUserAuth
 from .login_form import LoginForm
-
+from django.core.validators import validate_email
 
 """
     These views are only for testing the models, and their access
@@ -188,6 +188,7 @@ def get_list_of_users(request, username):
     Display a list of all users (admin, leader, member)
     /list/
     :param request:
+    :param username:
     :return:
     """
     user = AdminUser.objects.get(username__iexact=username)
