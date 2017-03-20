@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 import pickle
-import schedule
 import time
 import users
 
@@ -43,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'guardian',
     'annoying',
+    'django_cron',
     'users',
     'log',
 ]

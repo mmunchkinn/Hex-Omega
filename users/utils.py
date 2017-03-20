@@ -3,8 +3,12 @@
 
 from django.core.mail import send_mail, send_mass_mail
 from haikunator import haikunator
+from twilio.rest import TwilioRestClient
 from datetime import datetime, timedelta
 import _thread
+
+account = 'AC9d8bf59ad299fbb1577b128f78536be0'
+token = '1294abce462eb167756de08a6df9d10b'
 
 sys_email = 'hex.omega@yandex.com'
 
@@ -53,7 +57,12 @@ def tasks_email_schedule():
                     t = (sub, msg, sys_email, l)
                     print(t, file=open('mass_mail_log.txt', 'w+'))
                     lp.append(t)
-                    # mail_kickoff(l, sub, var=2)
+                    client = TwilioRestClient(account, token)
+                    message = client.messages.create(
+                        to='+6582897924',
+                        from_='+17042695745',
+                        body=msg)
+
         if len(lp) is not 0:
             mail_kickoff(lp, var=2)
 

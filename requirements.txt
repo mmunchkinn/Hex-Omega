@@ -4,6 +4,8 @@ mysqlclient
 whitenoise
 django-guardian
 django-annoying
+django-cron
 parse
 yattag
 haikunator
+twilio
