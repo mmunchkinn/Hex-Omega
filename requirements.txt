@@ -5,3 +5,4 @@ django-guardian
 django-annoying
 parse
 yattag
+haikunator

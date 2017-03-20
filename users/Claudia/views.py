@@ -20,11 +20,12 @@ def create_admin_user(request, username):
             first_name = request.POST.get('first_name')
             last_name = request.POST.get('last_name')
             email = request.POST.get('email')
-            password = request.POST.get('password')
-            bio = request.POST.get('bio')
-            user = AdminUser.objects.create_user(username=username, first_name=first_name, last_name=last_name,
-                                                 email=email, password=password, bio=bio)
+            password = get_default_password()
+            # bio = request.POST.get('bio')
+            user = AdminUser.objects.create(username=username, first_name=first_name, last_name=last_name,
+                                            email=email)
             user.set_password(password)
+            send_default_password(user, password)
             user.save()
             update_session_auth_hash(request, request.user)
             return redirect('display_admin', request.user.username)
@@ -41,6 +42,7 @@ def get_admin_detail(request, username):
     user = AdminUser.objects.get(username__iexact=username)
     return render(request, 'users/user_information.html', {'adminuser': user})
 
+
 # abhi's test decorator : removed from repo
 # @viewing_context
 @login_required
@@ -56,11 +58,9 @@ def update_admin_detail(request, username):
     form_data = {'first_name': user.first_name, 'last_name': user.last_name,
                  'email': user.email, 'password': " ", 'bio': user.bio}
     form = AdminUpdateForm(request.POST, initial=form_data)
-    # password_form = PasswordForm(request.POST)
     if request.method == 'POST':
         print(form.errors)
         if form.is_valid():
-            # user.username = request.POST.get('username')
             user.first_name = request.POST.get('first_name')
             user.last_name = request.POST.get('last_name')
             user.email = request.POST.get('email')

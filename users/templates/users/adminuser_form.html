@@ -40,6 +40,11 @@
                               </ul>
                         </li>
                         <li>
+                            <a href="{% url 'add_leader' user.username %}">
+                                <p>Create Leader</p>
+                            </a>
+                        </li>
+                        <li>
                             <a href="{% url 'jump_ship' %}">
                                 <p>Log out</p>
                             </a>
@@ -104,25 +109,6 @@
                                             </div>
                                         </div>
                                     </div>
-
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="password">Password</label>
-                                                <input type="password" class="form-control" placeholder="" name="password">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label>Bio</label>
-                                                <textarea rows="5" class="form-control" placeholder="Description" name="bio"></textarea>
-                                            </div>
-                                        </div>
-                                    </div>
-
 
 
                                     <button type="submit" class="btn btn-info btn-fill btnleft">Create</button>

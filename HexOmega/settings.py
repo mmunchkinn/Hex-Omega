@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+import pickle
 import users
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -136,3 +137,11 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 LOGIN_REDIRECT_URL = '/login/'
 LOGIN_URL = '/login/'
+
+# Mail settings
+o = open('HexOmega/pwd.dump', 'rb')
+EMAIL_HOST = 'smtp.yandex.com'
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
+EMAIL_HOST_USER = 'hex.omega@yandex.com'
+EMAIL_HOST_PASSWORD = pickle.load(o)
