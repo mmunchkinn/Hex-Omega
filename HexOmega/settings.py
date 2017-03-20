@@ -12,7 +12,11 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 import pickle
+import schedule
+import time
 import users
+
+# from users.utils import start_schedule_thread
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -145,3 +149,5 @@ EMAIL_PORT = 465
 EMAIL_USE_SSL = True
 EMAIL_HOST_USER = 'hex.omega@yandex.com'
 EMAIL_HOST_PASSWORD = pickle.load(o)
+
+# schedule.every().day.at('09:00').do(start_schedule_thread)

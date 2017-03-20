@@ -1,6 +1,8 @@
 from users.models import *
 from datetime import datetime, timedelta
 
+from users.utils import start_schedule_thread, tasks_email_schedule
+
 import os
 from HexOmega.settings import BASE_DIR
 
@@ -27,12 +29,8 @@ def setup():
     p.end_date = datetime.now() + timedelta(days=30)
     p.leader_id = l.id
     p.save()
-    # !!!!!!
     p.admins.add(adm)
     p.save()
-
-    # self.m.project.activitylog.content = self.p.activitylog.content
-    print('#####' + str(p.activitylog.content))
 
     # Create member
     m = MemberUser(username='theseus', first_name='theseus', last_name='demigod')
@@ -40,7 +38,34 @@ def setup():
     m.role_id = r.id
     m.project_id = p.id
     m.save()
-    print('######' + str(m.project.activitylog.content))
+
+    n = MemberUser(username='abhishek', first_name='Abhishek', last_name='Venkatesh')
+    n.set_password('qwerty123')
+    n.email = 'avsv96@gmail.com'
+    n.role_id = r.id
+    n.project_id = p.id
+    n.save()
+
+    o = MemberUser(username='caroline', first_name='caroline', last_name='i_don\'t_know')
+    o.set_password('qwerty123')
+    o.email = 'carolinemary224@gmail.com'
+    o.role_id = r.id
+    o.project_id = p.id
+    o.save()
+
+    t = Task(status='Assigned', est_start=datetime.now() - timedelta(days=1),
+             est_end=datetime.now() + timedelta(days=1), action_list=p.actionlist)
+    t.actual_start = t.est_start
+    t.actual_end = t.est_end
+    t.title = 'Programming'
+    t.save()
+    t.memberuser_set.add(m)
+    t.memberuser_set.add(n)
+    t.memberuser_set.add(o)
+    t.save()
+
+    start_schedule_thread()
+    # tasks_email_schedule()
 
 
 if __name__ == '__main__':

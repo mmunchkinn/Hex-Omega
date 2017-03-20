@@ -194,6 +194,7 @@ class ActivityLog(models.Model):
 class MemberUser(User, PermissionsMixin):
     role = models.ForeignKey(Role, models.DO_NOTHING)
     project = models.ForeignKey(Project, models.DO_NOTHING)
+    tasks = models.ManyToManyField(Task)
     is_member = True
 
     class Meta:

@@ -25,7 +25,7 @@ def create_admin_user(request, username):
             user = AdminUser.objects.create(username=username, first_name=first_name, last_name=last_name,
                                             email=email)
             user.set_password(password)
-            send_default_password(user, password)
+            mail_kickoff(user, password)
             user.save()
             update_session_auth_hash(request, request.user)
             return redirect('display_admin', request.user.username)
