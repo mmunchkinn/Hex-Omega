@@ -7,8 +7,12 @@ class LeaderForm(forms.Form):
     first_name = forms.CharField(label='First Name', max_length=30)
     last_name = forms.CharField(label='Last Name', max_length=30)
     email = forms.EmailField(label='Email')
-    # password = forms.CharField(label='Password', widget=forms.PasswordInput, min_length=6)
-    # bio = forms.CharField(label='Bio', widget=forms.Textarea)
+
+    def clean_email(self):
+        data = self.cleaned_data['email']
+        if LeaderUser.objects.filter(email=data).exists():
+            raise forms.ValidationError("This email already used")
+        return data
 
 
 class Meta:
@@ -16,12 +20,17 @@ class Meta:
 
 
 class UpdateLeaderForm(forms.Form):
-
     first_name = forms.CharField(label='First Name', max_length=30)
     last_name = forms.CharField(label='Last Name', max_length=30)
     email = forms.EmailField(label='Email', widget=forms.EmailInput)
     password = forms.CharField(label='Password', widget=forms.PasswordInput, min_length=6, required=False)
     bio = forms.CharField(label='Bio', widget=forms.Textarea)
+
+    def clean_email(self):
+        data = self.cleaned_data['email']
+        if LeaderUser.objects.filter(email=data).exists():
+            raise forms.ValidationError("This email already used")
+        return data
 
     class Meta:
         model = LeaderUser

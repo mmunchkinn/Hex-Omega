@@ -2,6 +2,8 @@ from users.views import *
 
 from .add_leader_form import *
 
+from django.db.utils import IntegrityError
+
 
 def create_leader_user(request, username):
     form = LeaderForm()
@@ -13,13 +15,18 @@ def create_leader_user(request, username):
             last_name = request.POST.get('last_name')
             email = request.POST.get('email')
             password = get_default_password()
-            user = LeaderUser.objects.create_user(username=username, first_name=first_name, last_name=last_name,
-                                                  email=email, password=password)
+            try:
+                user = LeaderUser.objects.create_user(username=username, first_name=first_name, last_name=last_name,
+                                                      email=email, password=password)
+            except IntegrityError as e:
+                return render(request, 'users/leaderuser_form.html',
+                              {'form': form, 'mail_error': 'The email is not unique!'})
+
             user.set_password(password)
             mail_kickoff(user, password)
             user.save()
             update_session_auth_hash(request, request.user)
-            return redirect('display_leader', request.user.username)
+            return redirect('admin_user_logged_in', request.user.username)
     return render(request, 'users/leaderuser_form.html', {'form': form})
 
 
