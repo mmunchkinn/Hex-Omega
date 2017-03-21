@@ -7,9 +7,6 @@ from twilio.rest import TwilioRestClient
 from datetime import datetime, timedelta
 import _thread
 
-account = 'AC9d8bf59ad299fbb1577b128f78536be0'
-token = '1294abce462eb167756de08a6df9d10b'
-
 sys_email = 'hex.omega@yandex.com'
 
 
@@ -50,21 +47,17 @@ def tasks_email_schedule():
         for task in project.actionlist.task_set.all():
             if task.est_end.date() - timedelta(days=1) == datetime.now().date():
                 if task.status is not 'Completed' and task.status is not 'Unassigned':
-                    l = [member.email for member in task.memberuser_set.all() if member.email is not '']
+                    l = [member.email for member in task.users.all() if member.email is not '']
                     sub = task.action_list.project.name + ' : ' + task.title
                     msg = 'This is an automated reminder to submit your deliverable before tomorrow.\n\n'
                     msg += 'Please do not reply to this mail.'
                     t = (sub, msg, sys_email, l)
                     print(t, file=open('mass_mail_log.txt', 'w+'))
                     lp.append(t)
-                    client = TwilioRestClient(account, token)
-                    message = client.messages.create(
-                        to='+6582897924',
-                        from_='+17042695745',
-                        body=msg)
 
         if len(lp) is not 0:
-            mail_kickoff(lp, var=2)
+            # mail_kickoff(lp, var=2)
+            print(lp)
 
 
 def send_reminder_threads(mails, **kwargs):
