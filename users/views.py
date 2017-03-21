@@ -5,7 +5,7 @@ from .user_form import AdminUserForm, AdminUpdateForm, MemberUpdateForm
 from .models import Project, AdminUser, MemberUser, LeaderUser
 from .backends import CustomUserAuth
 from .login_form import LoginForm
-from django.core.validators import validate_email
+from django.core.exceptions import PermissionDenied
 
 """
     These views are only for testing the models, and their access
@@ -149,6 +149,7 @@ def get_admin_detail(request, username):
     """
     Display the information of an admin user
     :param request:
+    :param username:
     :return:
     """
     user = AdminUser.objects.get(username__iexact=username)
@@ -183,6 +184,29 @@ def update_admin_detail(request, username):
     return render(request, 'users/update_admin_form.html', {'adminuser': user, 'form': form, 'errors': form.errors})
 
 
+def delete_user(request, username, d):
+    """
+    To delete a particular user (admin/leader/member)
+    :param request:
+    :param username:
+    :param d:
+    :return:
+    """
+    if AdminUser.objects.filter(username__exact=d):
+        a = AdminUser.objects.get(username__exact=d)
+        a.delete()
+        print('admin deleted!')
+    if LeaderUser.objects.filter(username__exact=d):
+        l = LeaderUser.objects.get(username__exact=d)
+        l.delete()
+        print('leader deleted!')
+    if MemberUser.objects.filter(username__exact=d):
+        m = MemberUser.objects.get(username__exact=d)
+        m.delete()
+        print('member deleted!')
+    return redirect('list_of_users', username)
+
+
 def get_list_of_users(request, username):
     """
     Display a list of all users (admin, leader, member)
@@ -195,8 +219,8 @@ def get_list_of_users(request, username):
     admin_user_list = AdminUser.objects.order_by('pk')[:5]
     leader_user_list = LeaderUser.objects.order_by('pk')[:5]
     member_user_list = MemberUser.objects.order_by('pk')[:5]
-    context = {'admin_user_list': admin_user_list, 'leader_user_list': leader_user_list, 'member_user_list': member_user_list}
-    return render(request, 'users/list_of_users.html', context, {'adminuser': user})
+    context = {'adminuser': user, 'admin_user_list': admin_user_list, 'leader_user_list': leader_user_list, 'member_user_list': member_user_list}
+    return render(request, 'users/list_of_users.html', context)
 
 
 @login_required
@@ -237,3 +261,57 @@ def edit_member_information(request, username):
             return redirect('display_member', username)
 
     return render(request, 'users/update_member_form.html', {'memberuser': user, 'form': form, 'errors': form.errors})
+
+
+@login_required
+def display_all_projects(request, username):
+    """
+    Display all projects
+    :param request:
+    :param username:
+    :return:
+    """
+    project_list = Project.objects.all().order_by('status')[:5]
+    return render(request, 'users/all_project_list.html', {'project_list': project_list})
+
+
+@login_required
+def display_open_projects(request, username):
+    """
+    Display a list of open projects
+    :param request:
+    :param username:
+    :return:
+    """
+    open_project_list = Project.objects.filter(status='0').order_by('start_date')[:5]
+    return render(request, 'users/open_project_list.html', {'open_project_list': open_project_list})
+
+
+@login_required
+def project_information(request, username, p):
+    """
+    Display a particular project information
+    :param request:
+    :param username:
+    :param p:
+    :return:
+    """
+    project = Project.objects.get(name__exact=p)
+    return render(request, 'users/project_information.html', {'project': project})
+
+
+@login_required
+def view_project_log(request, username, p):
+    """
+    Retrieve and view a particular project log - untested
+    :param request:
+    :param username:
+    :param p:
+    :return:
+    """
+    project = Project.objects.get(name__exact=p)
+    if AdminUser.objects.filter(username__exact=username):
+        return redirect('/logs/p')
+    else:
+        return PermissionDenied
+    return render(request, 'users/project_information.html', {'project': project})

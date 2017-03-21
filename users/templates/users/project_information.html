@@ -1,0 +1,11 @@
+{% block main_content %}
+	{% block title %}<h4>{{ project.name }} Information</h4>{% endblock %}
+	{% csrf_token %}
+    <label><b>Name: </b></label>{{ project.name }} <br>
+    <label><b>Start Date:</b> </label>{{ project.start_date }} <br>
+    <label><b>End Date: </b></label>{{ project.end_date }} <br>
+    <label><b>Status: </b></label>{{ project.status }} <br>
+    <label><b>Description: </b></label>{{ project.description }} <br>
+    <label><b>Leader: </b></label>{{ project.leader }} <br>
+    <label><b>Admin: </b></label>{{ project.admins }} <br>
+{% endblock %}

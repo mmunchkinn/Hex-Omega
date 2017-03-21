@@ -10,6 +10,12 @@ class AdminUserForm(forms.Form):
     password = forms.CharField(label='Password', widget=forms.PasswordInput, min_length=8, required=False)
     bio = forms.CharField(label='Bio', widget=forms.Textarea)
 
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if AdminUser.objects.filter(username=username).exists():
+            raise forms.ValidationError("Username exists in the system.")
+        return username
+
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if AdminUser.objects.filter(email=email).exists():
