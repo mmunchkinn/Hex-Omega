@@ -128,6 +128,8 @@ class Project(models.Model):
 @receiver(post_save, sender=Project)
 def add_activitylog(sender, instance, created, **kwargs):
     if created:
+        if not os.path.isdir(os.path.join(BASE_DIR, os.path.join('projects', str(instance.name)))):
+            os.makedirs(os.path.join(BASE_DIR, os.path.join('projects', str(instance.name))))
         c = os.path.join(BASE_DIR,
                          os.path.join('projects',
                                       os.path.join(str(instance.name), 'activity.log')))
