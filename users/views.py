@@ -111,3 +111,21 @@ def jump_ship(request):
     print('jumping ship....')
     logout(request)
     return redirect('login_page')
+
+
+@login_required
+def delete_admin(request, username, d):
+    """
+        Using random, crappy, no good, templates.
+        good enough for testing. Will add appropriate ones
+        soon.
+    """
+    a = AdminUser.objects.get(username__exact=d)
+    a.delete()
+    print('deleted')
+    return redirect('list_users', username)
+
+
+@login_required
+def list_users(request, username):
+    return render(request, 'list.html', {'admins': AdminUser.objects.all()})

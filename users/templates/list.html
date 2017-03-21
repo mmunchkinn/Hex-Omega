@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Crap</title>
+</head>
+<body>
+
+<ul>
+    {% for a in admins %}
+        <li><a href="{% url 'delete_admin' request.user.username a.username %}">{{ a }}</a> </li>
+    {% endfor %}
+</ul>
+
+</body>
+</html>

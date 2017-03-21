@@ -9,6 +9,8 @@ urlpatterns = [
     url(r'^login/$', views.login_auth_2, name='login_page'),
     url(r'^logout/$', views.jump_ship, name='jump_ship'),
     url(r'^user/(?P<username>[A-Z0-9][0-9]{7})/$', views.logged_in, name="user_logged_in"),
+    url(r'^user/(?P<username>[A-Z0-9][0-9]{7})/delete/(?P<d>[A-Z0-9][0-9]{7})/$', views.delete_admin, name="delete_admin"),
+    url(r'^user/(?P<username>[A-Z0-9][0-9]{7})/list$', views.list_users, name="list_users"),
     # Home pages (now dummy pages)
     # the following will show list of open projects for the admin
     url(r'^admin_user/(?P<username>[A-Z0-9][0-9]{7})/$', views.logged_in, name="admin_user_logged_in"),
