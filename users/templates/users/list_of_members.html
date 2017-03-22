@@ -25,12 +25,12 @@
              {% for users in member_list %}
                  <tr>
                                             
-                     <td><a href="#">{{ users.username }}</a></td>
+                     <td><a href="{% url 'display_member' users.username %}">{{ users.username }}</a></td>
                      <td>{{ users.first_name }}</td>
                      <td>{{ users.last_name }}</td>
                      <td>{{ users.email }}</td>
                      <td style="text-align:center">
-                         <a href="#">
+                         <a href="{% url 'update_member' request.user.username users.username %}">
                              <div class="font-icon-detail"><i class="pe-7s-note"></i>
                              </div>
                          </a>

@@ -209,7 +209,7 @@ def update_an_admin(request, username, a):
             adm.bio = request.POST.get('bio')
             adm.save()
             update_session_auth_hash(request, request.user)
-            return redirect('list_of_users', username)
+            return redirect('list_of_admins', username)
 
     return render(request, 'users/update_admin_form.html', {'adminuser': adm, 'form': form, 'errors': form.errors})
 
@@ -322,31 +322,32 @@ def get_member_detail(request, username):
 
 
 @login_required
-def edit_member_information(request, username):
+def update_member(request, username, m):
     """
-    Update the information of a member user
+    Update a member's information from the list of all users
     :param request:
     :param username:
+    :param m:
     :return:
     """
-    user = MemberUser.objects.get(username__iexact=username)
-    form_data = {'first_name': user.first_name, 'last_name': user.last_name, 'email': user.email, 'password': " ", 'bio': user.bio}
+    mem = MemberUser.objects.get(username__iexact=m)
+    form_data = {'first_name': mem.first_name, 'last_name': mem.last_name,
+                 'email': mem.email, 'password': " ", 'bio': mem.bio}
     form = MemberUpdateForm(request.POST, initial=form_data)
     if request.method == 'POST':
-        print(form.errors)
         if form.is_valid():
-            user.first_name = request.POST.get('first_name')
-            user.last_name = request.POST.get('last_name')
-            user.email = request.POST.get('email')
+            mem.first_name = request.POST.get('first_name')
+            mem.last_name = request.POST.get('last_name')
+            mem.email = request.POST.get('email')
             p = request.POST['password']
             if (p is not '' or p is not None) and len(p.strip()) >= 8:
-                user.set_password(p)
-            user.bio = request.POST.get('bio')
-            user.save()
+                mem.set_password(p)
+            mem.bio = request.POST.get('bio')
+            mem.save()
             update_session_auth_hash(request, request.user)
-            return redirect('display_member', username)
+            return redirect('list_of_members', username)
 
-    return render(request, 'users/update_member_form.html', {'memberuser': user, 'form': form, 'errors': form.errors})
+    return render(request, 'users/update_member_form.html', {'memberuser': mem, 'form': form, 'errors': form.errors})
 
 
 @login_required
