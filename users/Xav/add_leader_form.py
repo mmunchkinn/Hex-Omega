@@ -14,9 +14,8 @@ class LeaderForm(forms.Form):
             raise forms.ValidationError("This email already used")
         return data
 
-
-class Meta:
-    model = LeaderUser
+    class Meta:
+        model = LeaderUser
 
 
 class UpdateLeaderForm(forms.Form):
@@ -28,9 +27,12 @@ class UpdateLeaderForm(forms.Form):
 
     def clean_email(self):
         data = self.cleaned_data['email']
-        if LeaderUser.objects.filter(email=data).exists():
-            raise forms.ValidationError("This email already used")
-        return data
+        if self.has_changed() is False:
+            if LeaderUser.objects.filter(email=data).exists():
+                raise forms.ValidationError("This email already used")
+            return data
+        else:
+            return data
 
     class Meta:
         model = LeaderUser

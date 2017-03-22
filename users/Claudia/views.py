@@ -1,6 +1,6 @@
 from users.views import *
 
-from .add_user_form import AdminUserForm, AdminUpdateForm, PasswordForm
+from .add_user_form import AdminUserForm, AdminUpdateForm
 
 
 @login_required

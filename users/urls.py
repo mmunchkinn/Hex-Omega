@@ -11,8 +11,6 @@ urlpatterns = [
     url(r'^login/$', views.login_auth_2, name='login_page'),
     # log out view
     url(r'^logout/$', views.jump_ship, name='jump_ship'),
-    # user dispatch
-    url(r'^user/(?P<username>[A-Z0-9][0-9]{7})/$', views.logged_in, name="user_logged_in"),
     # create project
     url(r'^leader_user/(?P<username>[A-Z0-9][0-9]{7})/create/$', views.create_project, name="create_project"),
     # user delete view
@@ -22,12 +20,13 @@ urlpatterns = [
 
     # Home pages (now dummy pages)
     # the following will show list of open projects for the admin
-    url(r'^admin_user/(?P<username>[A-Z0-9][0-9]{7})/$', views.logged_in, name="admin_user_logged_in"),
+    url(r'^admin_user/(?P<username>[A-Z0-9][0-9]{7})/$', views.logged_in, name="admin_home"),
     # show, create and edit tasks for specific project
-    url(r'^leader_user/(?P<username>[A-Z0-9][0-9]{7})/$', views.logged_in, name="leader_user_logged_in"),
+    url(r'^leader_user/(?P<username>[A-Z0-9][0-9]{7})/$', views.leader_home, name="leader_home"),
     # Show tasks assigned to specific user and able to upload deliverable.
-    url(r'^member_user/(?P<username>[A-Z0-9][0-9]{7})/$', views.logged_in, name="member_user_logged_in"),
-
+    url(r'^member_user/(?P<username>[A-Z0-9][0-9]{7})/$', views.logged_in, name="member_home"),
+    # user dispatch
+    url(r'^user/(?P<username>[A-Z0-9][0-9]{7})/$', views.logged_in, name="user_logged_in"),
 
     # ----- Claudia
     url(r"^admin_user/(?P<username>[A-Z0-9][0-9]{7})/add_admin/$", cv.create_admin_user, name='add_admin'),

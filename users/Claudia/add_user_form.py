@@ -13,6 +13,12 @@ class AdminUserForm(forms.Form):
     class Meta:
         model = AdminUser
 
+    def clean_email(self):
+        data = self.cleaned_data['email']
+        if AdminUser.objects.filter(email=data).exists():
+            raise forms.ValidationError("This email already used")
+        return data
+
 
 # It was I, It was needed. Change is inevitable.
 class AdminUpdateForm(forms.Form):
@@ -26,6 +32,11 @@ class AdminUpdateForm(forms.Form):
     class Meta:
         model = AdminUser
 
-
-class PasswordForm(forms.Form):
-    password = forms.CharField(label='Password', widget=forms.PasswordInput, min_length=6, required=False)
+    def clean_email(self):
+        data = self.cleaned_data['email']
+        if self.has_changed() is False:
+            if AdminUser.objects.filter(email=data).exists():
+                raise forms.ValidationError("This email already used")
+            return data
+        else:
+            return data
