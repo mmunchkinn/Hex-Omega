@@ -6,6 +6,7 @@ from .models import Project, AdminUser, MemberUser, LeaderUser
 from .backends import CustomUserAuth
 from .login_form import LoginForm
 from django.core.exceptions import PermissionDenied
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 """
     These views are only for testing the models, and their access
@@ -197,7 +198,6 @@ def update_an_admin(request, username, a):
     form_data = {'first_name': adm.first_name, 'last_name': adm.last_name,
                  'email': adm.email, 'password': " ", 'bio': adm.bio}
     form = AdminUpdateForm(request.POST, initial=form_data)
-    print(form_data)
     if request.method == 'POST':
         if form.is_valid():
             adm.first_name = request.POST.get('first_name')
@@ -237,20 +237,76 @@ def delete_user(request, username, d):
     return redirect('list_of_users', username)
 
 
-def get_list_of_users(request, username):
+def get_list_of_admins(request, username):
     """
-    Display a list of all users (admin, leader, member)
+    Display a list of admins
     /list/
     :param request:
     :param username:
     :return:
     """
     user = AdminUser.objects.get(username__iexact=username)
-    admin_user_list = AdminUser.objects.order_by('pk')[:5]
-    leader_user_list = LeaderUser.objects.order_by('pk')[:5]
-    member_user_list = MemberUser.objects.order_by('pk')[:5]
-    context = {'adminuser': user, 'admin_user_list': admin_user_list, 'leader_user_list': leader_user_list, 'member_user_list': member_user_list}
-    return render(request, 'users/list_of_users.html', context)
+    admin_user_list = AdminUser.objects.order_by('pk')
+
+    adm_paginator = Paginator(admin_user_list, 5)
+    adm_page = request.GET.get('page')
+    try:
+        admin_list = adm_paginator.page(adm_page)
+    except PageNotAnInteger:
+        admin_list = adm_paginator.page(1)
+    except EmptyPage:
+        admin_list = adm_paginator.page(adm_paginator.num_pages)
+
+    context = {'adminuser': user, 'admin_list': admin_list, 'page': adm_page}
+    return render(request, 'users/list_of_admins.html', context)
+
+
+def get_list_of_leaders(request, username):
+    """
+    Display a list leaders
+    /list/
+    :param request:
+    :param username:
+    :return:
+    """
+    user = AdminUser.objects.get(username__iexact=username)
+    leader_user_list = LeaderUser.objects.order_by('pk')
+
+    lead_paginator = Paginator(leader_user_list, 5)
+    lead_page = request.GET.get('page')
+    try:
+        leader_list = lead_paginator.page(lead_page)
+    except PageNotAnInteger:
+        leader_list = lead_paginator.page(1)
+    except EmptyPage:
+        leader_list = lead_paginator.page(lead_paginator.num_pages)
+
+    context = {'adminuser': user, 'leader_list': leader_list, 'page': lead_page}
+    return render(request, 'users/list_of_leaders.html', context)
+
+
+def get_list_of_members(request, username):
+    """
+    Display a list members
+    /list/
+    :param request:
+    :param username:
+    :return:
+    """
+    user = AdminUser.objects.get(username__iexact=username)
+    member_user_list = MemberUser.objects.order_by('pk')
+
+    mem_paginator = Paginator(member_user_list, 5)
+    mem_page = request.GET.get('page')
+    try:
+        member_list = mem_paginator.page(mem_page)
+    except PageNotAnInteger:
+        member_list = mem_paginator.page(1)
+    except EmptyPage:
+        member_list = mem_paginator.page(mem_paginator.num_pages)
+
+    context = {'adminuser': user, 'member_list': member_list, 'page': mem_page}
+    return render(request, 'users/list_of_members.html', context)
 
 
 @login_required

@@ -1,0 +1,55 @@
+{%extends "users/base.html" %}
+{% block navi_content %}
+    {%include "users/includes/navicontents_admin.html" %}
+{% endblock %}
+{% block usernavi_content %}
+    {%include "users/includes/usernavicontents_admin.html" %}
+{% endblock %}
+
+{% block main_content %}
+ <div class="content table-responsive table-full-width" >
+     <h4>List of Members</h4>
+     <table class="table table-hover table-striped" summary="member_user_list">
+         {% if member_list %}
+             <thead>
+                                        
+             <th>Username</th>
+             <th>First Name</th>
+             <th>Last Name</th>
+             <th>Email Address</th>
+             <th style="text-align:center">Edit</th>
+             <th style="text-align:center" >Delete</th>
+                                        
+             </thead>
+             <tbody>
+             {% for users in member_list %}
+                 <tr>
+                                            
+                     <td><a href="#">{{ users.username }}</a></td>
+                     <td>{{ users.first_name }}</td>
+                     <td>{{ users.last_name }}</td>
+                     <td>{{ users.email }}</td>
+                     <td style="text-align:center">
+                         <a href="#">
+                             <div class="font-icon-detail"><i class="pe-7s-note"></i>
+                             </div>
+                         </a>
+                     </td>
+                     <td style="text-align:center">
+                         <a href="{% url 'delete_user' request.user.username users.username %}">
+                             <div class="font-icon-detail"><i class="pe-7s-trash"></i>
+                             </div>
+                         </a>
+                     </td>
+                                            
+                 </tr>
+             {% endfor %}
+             </tbody>
+         {% else %}
+             <p>No members have been created</p>
+         {% endif %}
+     </table>
+     {%include "users/includes/pagni.html" with page=member_list %}
+
+</div>
+{% endblock%}
