@@ -10,23 +10,14 @@
 
 }
 body{ background-color: #252830;}
-.navbar-default
-{
-	padding:0;
-/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#555459+0,252830+100 */
-background: rgb(85,84,89); /* Old browsers */
-background: -moz-linear-gradient(top,  rgba(85,84,89,1) 0%, rgba(37,40,48,1) 100%); /* FF3.6-15 */
-background: -webkit-linear-gradient(top,  rgba(85,84,89,1) 0%,rgba(37,40,48,1) 100%); /* Chrome10-25,Safari5.1-6 */
-background: linear-gradient(to bottom,  rgba(85,84,89,1) 0%,rgba(37,40,48,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#555459', endColorstr='#252830',GradientType=0 ); /* IE6-9 */
-
-
-}
-
 .container-fluid {padding: 0; }
-
+.pagination {
+   
+    float: right;
+}
+.pagination>.active>a, .pagination>.active>a:focus, .pagination>.active>a:hover, .pagination>.active>span, .pagination>.active>span:focus, .pagination>.active>span:hover{background-color:#1DC7EA; border-color:#1DC7EA;}
 .navbar-header,#navbar2{padding-right:15px;padding-left:15px; }
-
+#tabledetails tbody td {border-bottom: 1px solid #434857; border-left: 0px; border-right: 0px; border-top: 0px;}
 .main-panel > .content{ background-color: #252830; border: 0px; }
 .footer,.wrapper,.main-panel,.jumbotron{background-color: #252830}
 
@@ -127,3 +118,4 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#555459', end
     border-top-color: #1DC7EA; }
 
   .btnleft{margin-right: 20px;}
+

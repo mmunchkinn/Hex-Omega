@@ -7,9 +7,21 @@
 
                 </li>
                 <li>
-                    <a href="#">
+                    <a href= "{% url 'list_of_admins' user.username %}">
                         <i class="pe-7s-user"></i>
-                        <p>Users</p>
+                        <p>Admin Users</p>
+                    </a>
+                </li>
+				<li>
+                    <a href= "{% url 'list_of_leaders' user.username %}">
+                        <i class="pe-7s-user"></i>
+                        <p>Leader Users</p>
+                    </a>
+                </li>
+				<li>
+                    <a href= "{% url 'list_of_members' user.username %}">
+                        <i class="pe-7s-user"></i>
+                        <p>Member Users</p>
                     </a>
                 </li>
                 <li>

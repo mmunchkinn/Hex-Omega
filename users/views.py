@@ -237,10 +237,10 @@ def delete_user(request, username, d):
     return redirect('list_of_users', username)
 
 
+@login_required
 def get_list_of_admins(request, username):
     """
     Display a list of admins
-    /list/
     :param request:
     :param username:
     :return:
@@ -261,10 +261,10 @@ def get_list_of_admins(request, username):
     return render(request, 'users/list_of_admins.html', context)
 
 
+@login_required
 def get_list_of_leaders(request, username):
     """
     Display a list leaders
-    /list/
     :param request:
     :param username:
     :return:
@@ -285,10 +285,10 @@ def get_list_of_leaders(request, username):
     return render(request, 'users/list_of_leaders.html', context)
 
 
+@login_required
 def get_list_of_members(request, username):
     """
     Display a list members
-    /list/
     :param request:
     :param username:
     :return:
