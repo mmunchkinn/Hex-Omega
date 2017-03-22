@@ -16,6 +16,7 @@ urlpatterns = [
     url(r"^admin_user/(?P<username>[a-zA-Z0-9_]{7,9})/details/$", views.get_admin_detail, name='display_admin'),
     url(r"^admin_user/(?P<username>[a-zA-Z0-9_]{7,9})/update/$", views.update_admin_detail, name='update_admin'),
     url(r"^admin_user/(?P<username>[a-zA-Z0-9_]{7,9})/list/$", views.get_list_of_users, name='list_of_users'),
+    url(r"^admin_user/(?P<username>[a-zA-Z0-9_]{7,9})/update/(?P<a>[a-zA-Z0-9_]{7,10})/$", views.update_an_admin, name='update_admin_user'),
     url(r"^admin_user/(?P<username>[a-zA-Z0-9_]{7,9})/delete/(?P<d>[a-zA-Z0-9_]{7,10})/$", views.delete_user, name='delete_user'),
     url(r"^member_user/(?P<username>[a-zA-Z0-9_]{7,9})/details/$", views.get_member_detail, name='display_member'),
     url(r"^member_user/(?P<username>[a-zA-Z0-9_]{7,9})/update/$", views.edit_member_information, name='update_member'),

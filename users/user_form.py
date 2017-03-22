@@ -33,12 +33,6 @@ class AdminUpdateForm(forms.Form):
     password = forms.CharField(label='Password', widget=forms.PasswordInput, min_length=8, required=False)
     bio = forms.CharField(label='Bio', widget=forms.Textarea)
 
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if AdminUser.objects.filter(email=email).exists():
-            raise forms.ValidationError("Email exists in the system.")
-        return email
-
     class Meta:
         model = AdminUser
 
@@ -53,12 +47,6 @@ class MemberUpdateForm(forms.Form):
     email = forms.EmailField(label='Email', widget=forms.EmailInput)
     password = forms.CharField(label='Password', widget=forms.PasswordInput, min_length=6, required=False)
     bio = forms.CharField(label='Bio', widget=forms.Textarea)
-
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if MemberUser.objects.filter(email=email).exists():
-            raise forms.ValidationError("Email exists in the system.")
-        return email
 
     class Meta:
         model = MemberUser

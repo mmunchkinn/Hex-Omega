@@ -159,7 +159,7 @@ def get_admin_detail(request, username):
 @login_required
 def update_admin_detail(request, username):
     """
-    Update the information of an admin user
+    Update the information of an admin user from "edit profile"
     :param request:
     :param username:
     :return:
@@ -182,6 +182,36 @@ def update_admin_detail(request, username):
             return redirect('display_admin', username)
 
     return render(request, 'users/update_admin_form.html', {'adminuser': user, 'form': form, 'errors': form.errors})
+
+
+@login_required
+def update_an_admin(request, username, a):
+    """
+    Update an admin's information from the list of all users
+    :param request:
+    :param username:
+    :param a:
+    :return:
+    """
+    adm = AdminUser.objects.get(username__iexact=a)
+    form_data = {'first_name': adm.first_name, 'last_name': adm.last_name,
+                 'email': adm.email, 'password': " ", 'bio': adm.bio}
+    form = AdminUpdateForm(request.POST, initial=form_data)
+    print(form_data)
+    if request.method == 'POST':
+        if form.is_valid():
+            adm.first_name = request.POST.get('first_name')
+            adm.last_name = request.POST.get('last_name')
+            adm.email = request.POST.get('email')
+            p = request.POST['password']
+            if (p is not '' or p is not None) and len(p.strip()) >= 8:
+                adm.set_password(p)
+            adm.bio = request.POST.get('bio')
+            adm.save()
+            update_session_auth_hash(request, request.user)
+            return redirect('list_of_users', username)
+
+    return render(request, 'users/update_admin_form.html', {'adminuser': adm, 'form': form, 'errors': form.errors})
 
 
 def delete_user(request, username, d):
@@ -311,7 +341,7 @@ def view_project_log(request, username, p):
     """
     project = Project.objects.get(name__exact=p)
     if AdminUser.objects.filter(username__exact=username):
-        return redirect('/logs/p')
+        return redirect('/logs/{project.name}')
     else:
         return PermissionDenied
     return render(request, 'users/project_information.html', {'project': project})
