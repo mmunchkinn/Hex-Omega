@@ -1,22 +1,46 @@
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 
 from django.contrib.auth.models import Group
-
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .utils import get_default_password, mail_kickoff
 from .models import Project, AdminUser, MemberUser, LeaderUser
 from .backends import CustomUserAuth
-from .forms.login_form import LoginForm
-from .forms.project_forms import CreateProjectForm
-
-from .Xav.user_context import url_context
+from .login_form import LoginForm
 
 """
     These views are only for testing the models, and their access
 """
+
+
+def search(request):
+    errors = []
+    if 'q' in request.GET:
+        message = 'You searched for: {}'.format(request.GET['q'])
+        message += "<br>"
+
+        projects = Project.objects.filter(name__contains=request.GET['q'])
+        if request.GET['q'] is '':
+            errors.append('Enter a search term.')
+            return render(request,
+                          'users/search_form.html',
+                          {'errors': errors})
+
+        return render(request,
+                      'users/search_form.html',
+                      {
+                          'errors': errors,
+                          'projects': projects,
+                          'query': request.GET['q']
+                      }
+                      )
+
+    return render(request,
+                  'users/search_form.html',
+                  {'errors': errors,
+                   'first': True})
 
 
 def index(request):
@@ -89,64 +113,26 @@ def jump_ship(request):
     return redirect('login_page')
 
 
-@login_required
-def delete_admin(request, username, d):
-    """
-        Using random, crappy, no good, templates.
-        good enough for testing. Will add appropriate ones
-        soon.
-    """
-    a = AdminUser.objects.get(username__exact=d)
-    a.delete()
-    print('deleted')
-    return redirect('list_users', username)
-
-
-@login_required
-def list_users(request, username):
-    return render(request, 'list.html', {'admins': AdminUser.objects.all()})
-
-
-@login_required
-@url_context
 def get_list_of_users(request):
     """
     Display a list of admin users
     /list/
     :param request:
     :return:
-    :author Caroline
     """
     admin_user_list = AdminUser.objects.order_by('pk')
-    paginator = Paginator(admin_user_list, 1)  # Show 3 admin per page
+    paginator = Paginator(admin_user_list, 1) # Show 3 admin per page
 
     page = request.GET.get('page')
     try:
-        admin_list = paginator.page(page)
+        admin_list= paginator.page(page)
     except PageNotAnInteger:
         # If page is not an integer, deliver first page.
         admin_list = paginator.page(1)
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
-        admin_list = paginator.page(paginator.num_pages)
-    context = {'admin_list': admin_list, 'page': page}
-    return render(request, 'users/list_of_users.html', context)
+        admin_list= paginator.page(paginator.num_pages)
+    context= {'admin_list': admin_list, 'page': page}
+    return render(request, 'users/list_of_users.html',context )
 
 
-# ============================================================================
-# My project and tasks modules
-# 2017-03-22 12:27
-
-@login_required
-def create_project(request, username):
-    if request.method == 'POST':
-        form = CreateProjectForm(request.POST)
-        if form.is_valid():
-            p = form.save(commit=False)
-            p.leader = LeaderUser.objects.get(username__exact=username)
-            p.save()
-        return redirect('display_leader', username)
-    else:
-        form = CreateProjectForm()
-
-    return render(request, 'crproj.html', {'form': form})

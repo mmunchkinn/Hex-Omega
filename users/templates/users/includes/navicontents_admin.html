@@ -1,0 +1,34 @@
+<ul class="nav">
+                <li class="active">
+                    <a href="{% url 'display_admin' request.user.username %}">
+                        <i class="pe-7s-home"></i>
+                        <p>Home</p>
+                    </a>
+
+                </li>
+                <li>
+                    <a href= "{% url 'list_of_users' %}">
+                        <i class="pe-7s-user"></i>
+                        <p>Admin Users</p>
+                    </a>
+                </li>
+                <li>
+                    <a href= "{% url 'list_of_users' %}">
+                        <i class="pe-7s-user"></i>
+                        <p>Leader Users</p>
+                    </a>
+                </li>
+                <li>
+                    <a href= "{% url 'list_of_users' %}">
+                        <i class="pe-7s-user"></i>
+                        <p>Member Users</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="pe-7s-note2"></i>
+                        <p>Projects</p>
+                    </a>
+                </li>
+                
+</ul>
