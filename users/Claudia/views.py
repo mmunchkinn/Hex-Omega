@@ -1,6 +1,6 @@
 from users.views import *
 
-from .add_user_form import AdminUserForm, AdminUpdateForm
+from .user_form import AdminUserForm, AdminUpdateForm, MemberUpdateForm
 
 
 @login_required
@@ -48,12 +48,11 @@ def get_admin_detail(request, username):
 @login_required
 def update_admin_detail(request, username):
     """
-    Update the information of an admin user
+    Update the information of an admin user from "edit profile"
     :param request:
     :param username:
     :return:
     """
-    print(username)
     user = AdminUser.objects.get(username__iexact=username)
     form_data = {'first_name': user.first_name, 'last_name': user.last_name,
                  'email': user.email, 'password': " ", 'bio': user.bio}
@@ -72,11 +71,206 @@ def update_admin_detail(request, username):
             update_session_auth_hash(request, request.user)
             return redirect('display_admin', username)
 
-        # if password_form.is_valid():
-        #     p = request.POST.get('password')
-        #     if (p is not '' or p is not None) and len(p.strip()) >= 8:
-        #         user.set_password(p)
-        #         user.save()
-        #         update_session_auth_hash(request, request.user)
-
     return render(request, 'users/update_admin_form.html', {'adminuser': user, 'form': form, 'errors': form.errors})
+
+
+@login_required
+def update_an_admin(request, username, a):
+    """
+    Update an admin's information from the list of all users
+    :param request:
+    :param username:
+    :param a:
+    :return:
+    """
+    adm = AdminUser.objects.get(username__iexact=a)
+    form_data = {'first_name': adm.first_name, 'last_name': adm.last_name,
+                 'email': adm.email, 'password': " ", 'bio': adm.bio}
+    form = AdminUpdateForm(request.POST, initial=form_data)
+    if request.method == 'POST':
+        if form.is_valid():
+            adm.first_name = request.POST.get('first_name')
+            adm.last_name = request.POST.get('last_name')
+            adm.email = request.POST.get('email')
+            p = request.POST['password']
+            if (p is not '' or p is not None) and len(p.strip()) >= 8:
+                adm.set_password(p)
+            adm.bio = request.POST.get('bio')
+            adm.save()
+            update_session_auth_hash(request, request.user)
+            return redirect('list_of_admins', username)
+
+    return render(request, 'users/update_admin_form.html', {'adminuser': adm, 'form': form, 'errors': form.errors})
+
+
+def delete_user(request, username, d):
+    """
+    To delete a particular user (admin/leader/member)
+    :param request:
+    :param username:
+    :param d:
+    :return:
+    """
+    if AdminUser.objects.filter(username__exact=d):
+        a = AdminUser.objects.get(username__exact=d)
+        a.delete()
+        print('admin deleted!')
+    if LeaderUser.objects.filter(username__exact=d):
+        l = LeaderUser.objects.get(username__exact=d)
+        l.delete()
+        print('leader deleted!')
+    if MemberUser.objects.filter(username__exact=d):
+        m = MemberUser.objects.get(username__exact=d)
+        m.delete()
+        print('member deleted!')
+    return redirect('list_of_users', username)
+
+
+@login_required
+def get_list_of_admins(request, username):
+    """
+    Display a list of admins
+    :param request:
+    :param username:
+    :return:
+    """
+    user = AdminUser.objects.get(username__iexact=username)
+    admin_user_list = AdminUser.objects.order_by('pk')
+
+    adm_paginator = Paginator(admin_user_list, 5)
+    adm_page = request.GET.get('page')
+    try:
+        admin_list = adm_paginator.page(adm_page)
+    except PageNotAnInteger:
+        admin_list = adm_paginator.page(1)
+    except EmptyPage:
+        admin_list = adm_paginator.page(adm_paginator.num_pages)
+
+    context = {'adminuser': user, 'admin_list': admin_list, 'page': adm_page}
+    return render(request, 'users/list_of_admins.html', context)
+
+
+@login_required
+def get_list_of_leaders(request, username):
+    """
+    Display a list leaders
+    :param request:
+    :param username:
+    :return:
+    """
+    user = AdminUser.objects.get(username__iexact=username)
+    leader_user_list = LeaderUser.objects.order_by('pk')
+
+    lead_paginator = Paginator(leader_user_list, 5)
+    lead_page = request.GET.get('page')
+    try:
+        leader_list = lead_paginator.page(lead_page)
+    except PageNotAnInteger:
+        leader_list = lead_paginator.page(1)
+    except EmptyPage:
+        leader_list = lead_paginator.page(lead_paginator.num_pages)
+
+    context = {'adminuser': user, 'leader_list': leader_list, 'page': lead_page}
+    return render(request, 'users/list_of_leaders.html', context)
+
+
+@login_required
+def get_list_of_members(request, username):
+    """
+    Display a list members
+    :param request:
+    :param username:
+    :return:
+    """
+    user = AdminUser.objects.get(username__iexact=username)
+    member_user_list = MemberUser.objects.order_by('pk')
+
+    mem_paginator = Paginator(member_user_list, 5)
+    mem_page = request.GET.get('page')
+    try:
+        member_list = mem_paginator.page(mem_page)
+    except PageNotAnInteger:
+        member_list = mem_paginator.page(1)
+    except EmptyPage:
+        member_list = mem_paginator.page(mem_paginator.num_pages)
+
+    context = {'adminuser': user, 'member_list': member_list, 'page': mem_page}
+    return render(request, 'users/list_of_members.html', context)
+
+
+@login_required
+def get_member_detail(request, username):
+    """
+    Display the information of a member user
+    :param request:
+    :param username:
+    :return:
+    """
+    user = MemberUser.objects.get(username__iexact=username)
+    return render(request, 'users/member_information.html', {'memberuser': user})
+
+
+@login_required
+def update_member(request, username, m):
+    """
+    Update a member's information from the list of all users
+    :param request:
+    :param username:
+    :param m:
+    :return:
+    """
+    mem = MemberUser.objects.get(username__iexact=m)
+    form_data = {'first_name': mem.first_name, 'last_name': mem.last_name,
+                 'email': mem.email, 'password': " ", 'bio': mem.bio}
+    form = MemberUpdateForm(request.POST, initial=form_data)
+    if request.method == 'POST':
+        if form.is_valid():
+            mem.first_name = request.POST.get('first_name')
+            mem.last_name = request.POST.get('last_name')
+            mem.email = request.POST.get('email')
+            p = request.POST['password']
+            if (p is not '' or p is not None) and len(p.strip()) >= 8:
+                mem.set_password(p)
+            mem.bio = request.POST.get('bio')
+            mem.save()
+            update_session_auth_hash(request, request.user)
+            return redirect('list_of_members', username)
+
+    return render(request, 'users/update_member_form.html', {'memberuser': mem, 'form': form, 'errors': form.errors})
+
+
+@login_required
+def display_all_projects(request, username):
+    """
+    Display all projects
+    :param request:
+    :param username:
+    :return:
+    """
+    project_list = Project.objects.all().order_by('status')[:5]
+    return render(request, 'users/all_project_list.html', {'project_list': project_list})
+
+
+@login_required
+def display_open_projects(request, username):
+    """
+    Display a list of open projects
+    :param request:
+    :param username:
+    :return:
+    """
+    open_project_list = Project.objects.filter(status='0').order_by('start_date')[:5]
+    return render(request, 'users/open_project_list.html', {'open_project_list': open_project_list})
+
+
+@login_required
+def project_information(request, username, p):
+    """
+    Display a particular project information
+    :param request:
+    :param username:
+    :param p:
+    :return:
+    """
+    project = Project.objects.get(name__exact=p)
+    return render(request, 'users/project_information.html', {'project': project})

@@ -1,6 +1,6 @@
 from django.test import TestCase
 from users.models import AdminUser
-from users.Claudia.add_user_form import AdminUserForm
+from users.Claudia.user_form import AdminUserForm
 
 
 class AdminModelTest(TestCase):

@@ -144,11 +144,11 @@ LOGIN_REDIRECT_URL = '/login/'
 LOGIN_URL = '/login/'
 
 # Mail settings
-o = open('HexOmega/pwd.dump', 'rb')
-EMAIL_HOST = 'smtp.yandex.com'
-EMAIL_PORT = 465
-EMAIL_USE_SSL = True
-EMAIL_HOST_USER = 'hex.omega@yandex.com'
-EMAIL_HOST_PASSWORD = pickle.load(o)
+# o = open('HexOmega/pwd.dump', 'rb')
+# EMAIL_HOST = 'smtp.yandex.com'
+# EMAIL_PORT = 465
+# EMAIL_USE_SSL = True
+# EMAIL_HOST_USER = 'hex.omega@yandex.com'
+# EMAIL_HOST_PASSWORD = pickle.load(o)
 
 # schedule.every().day.at('09:00').do(start_schedule_thread)

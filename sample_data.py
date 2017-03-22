@@ -17,11 +17,35 @@ def setup():
     adm.set_password('qwerty123')
     adm.save()
 
+    # Claudia's sample data
+    adm1 = AdminUser(username='G2503400', first_name='first', last_name='admin')
+    adm1.email = 'test_admin01@example.com'
+    adm1.set_password('qwerty123')
+    adm1.save()
+
+    # Claudia's sample data
+    adm2 = AdminUser(username='G2503500', first_name='second', last_name='admin')
+    adm2.email = 'test_admin02@example.com'
+    adm2.set_password('qwerty123')
+    adm2.save()
+
+    # Claudia's sample data
+    adm3 = AdminUser(username='G2503600', first_name='third', last_name='admin')
+    adm3.email = 'test_admin03@example.com'
+    adm3.set_password('qwerty123')
+    adm3.save()
+
     # Create leader
     l = LeaderUser(username='69497604', first_name='leader', last_name='man')
     l.email = 'leader_man@example.com'
     l.set_password('qwerty123')
     l.save()
+
+    # Claudia's sample data
+    l2 = LeaderUser(username='69498000', first_name='first', last_name='leader')
+    l2.email = 'test_leader@example.com'
+    l2.set_password('qwerty123')
+    l2.save()
 
     # Create project
     p = Project(name='PMT')
@@ -54,6 +78,14 @@ def setup():
     o.project_id = p.id
     o.save()
 
+    # Claudia's sample data
+    m1 = MemberUser(username='34656000', first_name='first', last_name='member')
+    m1.set_password('qwerty123')
+    m1.email = 'test_member@example.com'
+    m1.role_id = r.id
+    m1.project_id = p.id
+    m1.save()
+
     t = Task(status='Assigned', est_start=datetime.now() - timedelta(days=1),
              est_end=datetime.now() + timedelta(days=1), action_list=p.actionlist)
     t.actual_start = t.est_start
@@ -66,7 +98,7 @@ def setup():
     t.users.add(l)
     t.save()
 
-    start_schedule_thread()
+    # start_schedule_thread()
     # tasks_email_schedule()
 
 
