@@ -115,15 +115,17 @@ def delete_user(request, username, d):
         a = AdminUser.objects.get(username__exact=d)
         a.delete()
         print('admin deleted!')
+        return redirect('list_of_admins', username)
     if LeaderUser.objects.filter(username__exact=d):
         l = LeaderUser.objects.get(username__exact=d)
         l.delete()
         print('leader deleted!')
+        return redirect('list_of_leaders', username)
     if MemberUser.objects.filter(username__exact=d):
         m = MemberUser.objects.get(username__exact=d)
         m.delete()
         print('member deleted!')
-    return redirect('list_of_users', username)
+        return redirect('list_of_members', username)
 
 
 @login_required
