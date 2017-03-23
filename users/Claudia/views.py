@@ -250,7 +250,7 @@ def display_all_projects(request, username):
     :return:
     """
     project_list = Project.objects.all().order_by('pk')
-    proj_paginator = Paginator(project_list, 1)
+    proj_paginator = Paginator(project_list, 5)
     proj_page = request.GET.get('page')
 
     try:
@@ -272,7 +272,7 @@ def display_open_projects(request, username):
     :return:
     """
     open_proj_list = Project.objects.filter(status='0').order_by('start_date')
-    open_proj_paginator = Paginator(open_proj_list, 1)
+    open_proj_paginator = Paginator(open_proj_list, 5)
     open_proj_page = request.GET.get('page')
 
     try:
