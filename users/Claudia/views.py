@@ -271,7 +271,7 @@ def display_open_projects(request, username):
     :param username:
     :return:
     """
-    open_proj_list = Project.objects.filter(status='0').order_by('start_date')
+    open_proj_list = Project.objects.filter(status='0').order_by('pk')
     open_proj_paginator = Paginator(open_proj_list, 5)
     open_proj_page = request.GET.get('page')
 
