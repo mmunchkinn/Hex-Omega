@@ -30,7 +30,7 @@
                      <td>{{ l.last_name }}</td>
                      <td>{{ l.email }}</td>
                      <td style="text-align:center">
-                         <a href="#">
+                         <a href="{% url 'update_leader' request.user.username l.username %}">
                              <div class="font-icon-detail"><i class="pe-7s-note"></i>
                              </div>
                          </a>

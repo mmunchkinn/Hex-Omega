@@ -1,6 +1,6 @@
 from users.views import *
 
-from .user_form import AdminUserForm, AdminUpdateForm, MemberUpdateForm
+from .user_form import AdminUserForm, AdminUpdateForm, MemberUpdateForm, LeaderUpdateForm
 
 
 @login_required
@@ -177,6 +177,35 @@ def get_list_of_leaders(request, username):
 
 
 @login_required
+def update_leader(request, username, l):
+    """
+    Update a leader's information from the list of all leaders
+    :param request:
+    :param username:
+    :param l:
+    :return:
+    """
+    lead = LeaderUser.objects.get(username__iexact=l)
+    form_data = {'first_name': lead.first_name, 'last_name': lead.last_name,
+                 'email': lead.email, 'password': " ", 'bio': lead.bio}
+    form = LeaderUpdateForm(request.POST, initial=form_data)
+    if request.method == 'POST':
+        if form.is_valid():
+            lead.first_name = request.POST.get('first_name')
+            lead.last_name = request.POST.get('last_name')
+            lead.email = request.POST.get('email')
+            p = request.POST['password']
+            if (p is not '' or p is not None) and len(p.strip()) >= 8:
+                lead.set_password(p)
+            lead.bio = request.POST.get('bio')
+            lead.save()
+            update_session_auth_hash(request, request.user)
+            return redirect('list_of_leaders', username)
+
+    return render(request, 'users/update_leader_form.html', {'leaderuser': lead, 'form': form, 'errors': form.errors})
+
+
+@login_required
 def get_list_of_members(request, username):
     """
     Display a list members
@@ -215,7 +244,7 @@ def get_member_detail(request, username):
 @login_required
 def update_member(request, username, m):
     """
-    Update a member's information from the list of all users
+    Update a member's information from the list of all members
     :param request:
     :param username:
     :param m:

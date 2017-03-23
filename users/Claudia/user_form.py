@@ -1,5 +1,5 @@
 from django import forms
-from users.models import AdminUser, MemberUser
+from users.models import AdminUser, MemberUser, LeaderUser
 
 
 class AdminUserForm(forms.Form):
@@ -63,3 +63,23 @@ class MemberUpdateForm(forms.Form):
 
     class Meta:
         model = MemberUser
+
+
+class LeaderUpdateForm(forms.Form):
+    first_name = forms.CharField(label='First Name', max_length=30)
+    last_name = forms.CharField(label='Last Name', max_length=30)
+    email = forms.EmailField(label='Email', widget=forms.EmailInput)
+    password = forms.CharField(label='Password', widget=forms.PasswordInput, min_length=6, required=False)
+    bio = forms.CharField(label='Bio', widget=forms.Textarea)
+
+    def clean_email(self):
+        if 'email' in self.changed_data:
+            if LeaderUser.objects.filter(email=self.cleaned_data.get('email')).exists():
+                raise forms.ValidationError("Email exists in the system.")
+            print('changed!')
+        else:
+            print('no!')
+        return self.cleaned_data.get('email')
+
+    class Meta:
+        model = LeaderUser
