@@ -83,3 +83,9 @@ class LeaderUpdateForm(forms.Form):
 
     class Meta:
         model = LeaderUser
+
+
+class SearchForm(forms.Form):
+    CHOICES = (('Admin', 'Admin'), ('Leader', 'Leader'), ('Member', 'Member'))
+    first_name = forms.CharField(label='First Name')
+    rank = forms.ChoiceField(widget=forms.RadioSelect, choices=CHOICES, initial=0)

@@ -324,3 +324,45 @@ def project_information(request, username, p):
     """
     project = Project.objects.get(name__exact=p)
     return render(request, 'users/project_information.html', {'project': project})
+
+
+@login_required
+def users_search(request, username):
+    """
+    Search for all users
+    :param request:
+    :param username:
+    :return:
+    """
+    errors = []
+    # To search for admin users
+    if 'adm' in request.GET:
+        if 'first_name' in request.GET:
+            adminuser = AdminUser.objects.filter(first_name__contains=request.GET['first_name'])
+            if request.GET['first_name'] is '':
+                errors.append('Please enter a search term.')
+                return render(request, 'users/users_search.html', {'errors': errors})
+            context = {'adminuser': adminuser, 'errors': errors, 'query': request.GET['first_name']}
+            return render(request, 'users/users_search.html', context)
+
+    # To search for leader users
+    if 'lead' in request.GET:
+        if 'first_name' in request.GET:
+            leaderuser = LeaderUser.objects.filter(first_name__contains=request.GET['first_name'])
+            if request.GET['first_name'] is '':
+                errors.append('Please enter a search term.')
+                return render(request, 'users/users_search.html', {'errors': errors})
+            context = {'leaderuser': leaderuser, 'errors': errors, 'query': request.GET['first_name']}
+            return render(request, 'users/users_search.html', context)
+
+    # To search for member users
+    if 'mem' in request.GET:
+        if 'first_name' in request.GET:
+            memberuser = MemberUser.objects.filter(first_name__contains=request.GET['first_name'])
+            if request.GET['first_name'] is '':
+                errors.append('Please enter a search term.')
+                return render(request, 'users/users_search.html', {'errors': errors})
+            context = {'memberuser': memberuser, 'errors': errors, 'query': request.GET['first_name']}
+            return render(request, 'users/users_search.html', context)
+
+    return render(request, 'users/users_search.html', {'errors': errors})

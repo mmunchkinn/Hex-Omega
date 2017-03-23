@@ -32,6 +32,7 @@ urlpatterns = [
     url(r"^admin_user/(?P<username>[A-Z0-9][0-9]{7})/add_admin/$", cv.create_admin_user, name='add_admin'),
     url(r"^admin_user/(?P<username>[A-Z0-9][0-9]{7})/details/$", cv.get_admin_detail, name='display_admin'),
     url(r"^admin_user/(?P<username>[A-Z0-9][0-9]{7})/update/$", cv.update_admin_detail, name='update_admin'),
+    url(r"^admin_user/(?P<username>[A-Z0-9][0-9]{7})/search/$", cv.users_search, name='users_search'),
     url(r"^admin_user/(?P<username>[A-Z0-9][0-9]{7})/admin_list/$", cv.get_list_of_admins, name='list_of_admins'),
     url(r"^admin_user/(?P<username>[A-Z0-9][0-9]{7})/leader_list/$", cv.get_list_of_leaders, name='list_of_leaders'),
     url(r"^admin_user/(?P<username>[A-Z0-9][0-9]{7})/member_list/$", cv.get_list_of_members, name='list_of_members'),
