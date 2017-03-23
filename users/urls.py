@@ -41,7 +41,7 @@ urlpatterns = [
     url(r"^member_user/(?P<username>[A-Z0-9][0-9]{7})/details/$", cv.get_member_detail, name='display_member'),
     url(r"^admin_user/(?P<username>[A-Z0-9][0-9]{7})/project/$", cv.display_all_projects, name='all_project'),
     url(r"^admin_user/(?P<username>[A-Z0-9][0-9]{7})/open_project/$", cv.display_open_projects, name='open_project'),
-    url(r"^admin_user/(?P<username>[A-Z0-9][0-9]{7})/(?P<p>[A-Z0-9][0-9]{7})/project_detail/$", cv.project_information, name='project_detail'),
+    url(r"^admin_user/(?P<username>[A-Z0-9][0-9]{7})/(?P<p>[a-zA-Z0-9_]{1,10})/project_detail/$", cv.project_information, name='project_detail'),
     # ----- Xav
     # Creating a leader falls under the admin's role.
     url(r"^admin_user/(?P<username>[A-Z0-9][0-9]{7})/add_leader/$", xv.create_leader_user, name='add_leader'),

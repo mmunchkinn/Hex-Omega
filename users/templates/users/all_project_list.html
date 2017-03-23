@@ -2,7 +2,7 @@
  <div class="content table-responsive table-full-width" >
      <h4>List of All Projects</h4>
      <table class="table table-hover table-striped" summary="project_list">
-         {% if project_list %}
+         {% if all_project_list %}
              <thead>
              <th style="text-align:center">Name</th>
              <th style="text-align:center">Start Date</th>
@@ -10,7 +10,7 @@
              <th style="text-align:center">Status</th>
              </thead>
              <tbody>
-             {% for proj in project_list %}
+             {% for proj in all_project_list %}
                  <tr>
                      <td><a href="{% url 'project_detail' request.user.username proj.name %}">{{ proj.name }}</a></td>
                      <td>{{ proj.start_date }}</td>
@@ -23,5 +23,6 @@
              <p>No projects created</p>
          {% endif %}
      </table>
+     {%include "users/includes/pagni.html" with page=all_project_list %}
 </div>
 {% endblock%}

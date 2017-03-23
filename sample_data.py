@@ -56,6 +56,15 @@ def setup():
     p.admins.add(adm)
     p.save()
 
+    # Claudia's sample data
+    p2 = Project(name='PMT02')
+    p2.start_date = datetime.now()
+    p2.end_date = datetime.now() + timedelta(days=30)
+    p2.leader_id = l2.id
+    p2.save()
+    p2.admins.add(adm1)
+    p2.save()
+
     # Create member
     m = MemberUser(username='56475644', first_name='Heracles', last_name='Alcmene')
     m.set_password('qwerty123')

@@ -249,8 +249,18 @@ def display_all_projects(request, username):
     :param username:
     :return:
     """
-    project_list = Project.objects.all().order_by('status')[:5]
-    return render(request, 'users/all_project_list.html', {'project_list': project_list})
+    project_list = Project.objects.all().order_by('pk')
+    proj_paginator = Paginator(project_list, 1)
+    proj_page = request.GET.get('page')
+
+    try:
+        all_project_list = proj_paginator.page(proj_page)
+    except PageNotAnInteger:
+        all_project_list = proj_paginator.page(1)
+    except EmptyPage:
+        all_project_list = proj_paginator.page(proj_paginator.num_pages)
+
+    return render(request, 'users/all_project_list.html', {'all_project_list': all_project_list, 'page': proj_page})
 
 
 @login_required
@@ -261,8 +271,17 @@ def display_open_projects(request, username):
     :param username:
     :return:
     """
-    open_project_list = Project.objects.filter(status='0').order_by('start_date')[:5]
-    return render(request, 'users/open_project_list.html', {'open_project_list': open_project_list})
+    open_proj_list = Project.objects.filter(status='0').order_by('start_date')
+    open_proj_paginator = Paginator(open_proj_list, 1)
+    open_proj_page = request.GET.get('page')
+
+    try:
+        open_project_list = open_proj_paginator.page(open_proj_page)
+    except PageNotAnInteger:
+        open_project_list = open_proj_paginator.page(1)
+    except EmptyPage:
+        open_project_list = open_proj_paginator.page(open_proj_paginator.num_pages)
+    return render(request, 'users/open_project_list.html', {'open_project_list': open_project_list, 'page': open_proj_page})
 
 
 @login_required
