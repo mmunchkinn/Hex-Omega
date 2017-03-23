@@ -29,7 +29,12 @@
                 </tr>
                 <tr>
                     <td>Status</td>
-                    <td>{{ project.status }}</td>
+                    {% if project.status == '0' %}
+                        <td>Open</td>
+                    {% endif %}
+                    {% if project.status == '1' %}
+                        <td>Closed</td>
+                    {% endif %}
                 </tr>
                 <tr>
                     <td>Description</td>

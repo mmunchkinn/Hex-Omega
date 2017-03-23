@@ -58,9 +58,10 @@ def setup():
 
     # Claudia's sample data
     p2 = Project(name='PMT02')
-    p2.start_date = datetime.now()
-    p2.end_date = datetime.now() + timedelta(days=30)
+    p2.start_date = datetime.now() - timedelta(days=30)
+    p2.end_date = datetime.now() - timedelta(days=5)
     p2.leader_id = l2.id
+    p2.status = 1
     p2.save()
     p2.admins.add(adm1)
     p2.save()
