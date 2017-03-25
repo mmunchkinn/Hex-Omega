@@ -8,20 +8,25 @@
 									</p>
                               </a>
                               <ul class="dropdown-menu">
-                                <li><a href="{% url 'leader_home' user.username %}">My details</a></li>
-                                <li><a href="{% url 'update_leader' user.username %}">Update my profile</a></li>
+                                <li><a href="{% url 'display_leader' user.username%}">My Profile</a></li>
+								<li><a href="{% url 'update_leader' user.username %}">Update My Profile</a></li>
+                                    
                               </ul>
+							  
                         </li>
 						<li>
-                            <a href="#">
+                            <a href="{% url 'create_project' user.username %}">
                                 <p>Create Project</p>
                             </a>
                         </li>
-                        <li>
+						
+                            <li>
                             <a href="{% url 'add_task' user.username %}">
-                                <p>Add Tasks</p>
+                                <p>Add Task</p>
                             </a>
                         </li>
+                                
+                       
                         <li>
                             <a href="{% url 'jump_ship' %}">
                                 <p>Log out</p>

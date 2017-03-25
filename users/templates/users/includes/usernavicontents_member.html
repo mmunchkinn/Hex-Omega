@@ -8,8 +8,8 @@
 									</p>
                               </a>
                               <ul class="dropdown-menu">
-                                <li><a href="#">Details</a></li>
-                                    
+                                <li><a href="{% url 'display_member' request.user.username %}">My Profile</a></li>  
+								<li><a href="#">Update My Profile</a></li>  
                               </ul>
                         </li>
                         <li>
