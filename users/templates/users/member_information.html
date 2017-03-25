@@ -1,53 +1,63 @@
 {%extends "users/base.html" %}
  {% block navi_content %}
-		{%include "users/includes/navicontents_admin.html" %}
+		 <ul class="nav">
+                <li class="active">
+                    <a href="{% url 'index' %}">
+                        <i class="pe-7s-home"></i>
+                        <p>Home</p>
+                    </a>
+
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="pe-7s-user"></i>
+                        <p>Users</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="pe-7s-note2"></i>
+                        <p>Projects</p>
+                    </a>
+                </li>
+
+            </ul>
 {% endblock %}
 {% block usernavi_content %}
-		
-       {%include "users/includes/usernavicontents_admin.html" %} 
+		<ul class="nav navbar-nav navbar-right">
+
+                        <li class="dropdown">
+                              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <p>
+										Profile
+										<b class="caret"></b>
+									</p>
+                              </a>
+                              <ul class="dropdown-menu">
+                                <li><a href="#">Edit Profile</a></li>
+                                <!-- <li><a href="#">Change Password</a></li> -->
+
+                              </ul>
+                        </li>
+                        <li>
+                            <a href="{% url 'jump_ship' %}">
+                                <p>Log out</p>
+                            </a>
+                        </li>
+
+                    </ul>
+
 
 {% endblock %}
 
 {% block main_content %}
 
+
+	{% block title %}<h4>{{ memberuser.get_full_name }}'s Information</h4>{% endblock %}
 	{% csrf_token %}
-						<div class="header">
-                                <h4 class="title">{{ memberuser.first_name }} {{ memberuser.last_name }}'s Information</h4>
-                        </div>
-	
-	                        <div class="col-md-6">
-                            <div class="content table-responsive table-full-width" >
-
-                                <table class="table table-hover table-striped" id="tabledetails">
-                                    
-                                    <tbody>
-                                        <tr> 
-                                            <td class="col-xs-3">User Name</td>
-                                            <td>{{ membuser.username }}</td> 
-                                        </tr>
-                                        <tr> 
-                                            <td>First Name</td>
-                                            <td>{{ memberuser.first_name }}</td> 
-                                        </tr>
-                                        <tr> 
-                                            <td>Last Name</td>
-                                            <td>{{ memberuser.last_name }}</td> 
-                                        </tr>
-                                        <tr> 
-                                            <td>Email</td>
-                                            <td>{{ memberuser.email }}</td> 
-                                        </tr>
-                                        <tr> 
-                                            <td>Biography</td>
-                                            <td>{{memberuser.bio }}</td> 
-                                        </tr>
-                                        <tr>
-                                            <td>Project</td>
-                                            <td>{{ memberuser.project.name }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-
-                            </div>
-                        </div>
+    <label><b>Username: </b></label>{{ memberuser.username }} <br>
+    <label><b>First Name:</b> </label>{{ memberuser.first_name }} <br>
+    <label><b>Last Name: </b></label>{{ memberuser.last_name }} <br>
+    <label><b>Email: </b></label>{{ memberuser.email }} <br>
+    <label><b>Bio: </b></label>{{ memberuser.bio }} <br>
 {% endblock %}

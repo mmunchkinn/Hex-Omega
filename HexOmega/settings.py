@@ -11,11 +11,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
-import pickle
-import time
 import users
-
-# from users.utils import start_schedule_thread
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -41,9 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'guardian',
-    'bootstrap3',
     'annoying',
-    'django_cron',
     'users',
     'log',
 ]
@@ -137,18 +131,3 @@ AUTHENTICATION_BACKENDS = [
 AUTH_USER_MODEL = 'users.User'
 
 GUARDIAN_MONKEY_PATCH = False
-
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-
-LOGIN_REDIRECT_URL = '/login/'
-LOGIN_URL = '/login/'
-
-# Mail settings
-# o = open('HexOmega/pwd.dump', 'rb')
-# EMAIL_HOST = 'smtp.yandex.com'
-# EMAIL_PORT = 465
-# EMAIL_USE_SSL = True
-# EMAIL_HOST_USER = 'hex.omega@yandex.com'
-# EMAIL_HOST_PASSWORD = pickle.load(o)
-
-# schedule.every().day.at('09:00').do(start_schedule_thread)

@@ -1,1 +1,0 @@
-('PMT : Programming', 'This is an automated reminder to submit your deliverable before tomorrow.\n\nPlease do not reply to this mail.', 'hex.omega@yandex.com', ['leader_man@example.com', 'heracles@example.com', 'perseus@example.com', 'apollo@example.com'])
