@@ -1,0 +1,108 @@
+{% extends 'users/base.html' %}
+{% block navi_content %}
+ 
+		 <ul class="nav">
+                <li class="active">
+                    <a href="#">
+                        <i class="pe-7s-home"></i>
+                        <p>Home</p>
+                    </a>
+
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="pe-7s-user"></i>
+                        <p>Users</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="pe-7s-note2"></i>
+                        <p>Projects</p>
+                    </a>
+                </li>
+                
+            </ul>
+{% endblock %}
+{% block usernavi_content %}
+		<ul class="nav navbar-nav navbar-right">
+                        
+                        <li class="dropdown">
+                              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <p>
+										Profile
+										<b class="caret"></b>
+									</p>
+                              </a>
+                              <ul class="dropdown-menu">
+                                <li><a href="#">Edit Profile</a></li>
+                                    
+                              </ul>
+                        </li>
+                        <li>
+                            <a href="{% url 'jump_ship' %}">
+                                <p>Log out</p>
+                            </a>
+                        </li>
+						
+            </ul>
+		           
+				   
+{% endblock %}
+
+{% block main_content %}
+{% block title %}<h4> Update {{ adminuser.first_name }} {{ adminuser.last_name }} Information</h4>{% endblock %}
+    {% if errors %}
+        <ul>
+        {% for key, error in errors.items %}
+            {{ key }} - {{ error }}
+        {% endfor %}
+        </ul>
+
+    {% endif %}
+<form action="{% url 'update_admin' user.username %}" method="post">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label >First Name</label>
+                <input type="text" class="form-control" placeholder="First Name" name="first_name" value="{{ adminuser.first_name }}">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label >Last Name</label>
+                <input type="text" class="form-control" placeholder="Last Name" name="last_name" value="{{ adminuser.last_name }}">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label >Email</label>
+                <input type="email" class="form-control" placeholder="Email" name="email" value="{{ adminuser.email }}">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label >Password</label>
+                <input type="password" class="form-control" placeholder="" name="password" value="">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label >Bio</label>
+                <textarea rows="5" class="form-control" placeholder="Description" name="bio">{{ adminuser.bio }}</textarea>
+            </div>
+        </div>
+    </div>
+    <br>
+    <button type="submit" class="btn btn-info btn-fill btnleft" value="Update">Update</button>
+</form>
+{% endblock %}

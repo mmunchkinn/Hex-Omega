@@ -1,6 +1,12 @@
 {% extends 'users/base.html' %}
-
+{% block navi_content %}
+    {%include "users/includes/navicontents_admin.html" %}
+{% endblock %}
+{% block usernavi_content %}
+    {%include "users/includes/usernavicontents_admin.html" %}
+{% endblock %}
 {% block main_content %}
+{% block title %}<h4> Update {{ memberuser.get_full_name }}'s Information</h4>{% endblock %}
 <form action="" method="post">
     {% if form.errors %}
         <!-- Error messaging -->
@@ -60,6 +66,6 @@
     </div>
     <br>
     <button type="submit" class="btn btn-info btn-fill btnleft" value="Update">Update</button>
-    <button type="submit" class="btn btn-info btn-fill">Cancel</button>
+  
 </form>
 {% endblock %}

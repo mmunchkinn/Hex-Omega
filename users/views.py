@@ -1,44 +1,31 @@
+from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.shortcuts import render, redirect
+from django.http import HttpResponse
 from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from .user_form import AdminUserForm, AdminUpdateForm, MemberUpdateForm
-from .models import Project, AdminUser, MemberUser, LeaderUser
+from django.views.generic.edit import UpdateView, CreateView
+from django.views.generic.detail import DetailView
+from django.views.generic.list import ListView
+
+from django.contrib.auth.models import Group
+
+from HexOmega.settings import BASE_DIR
+from .utils import get_default_password, mail_kickoff, uploaded_file_handler
+from .models import Project, AdminUser, MemberUser, LeaderUser, Task
 from .backends import CustomUserAuth
-from .login_form import LoginForm
-from django.core.exceptions import PermissionDenied
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from .forms.login_form import LoginForm
+from .forms.project_forms import CreateProjectForm
+from .forms.task_forms import CreateTaskForm, LeaderUpdateTaskForm
+
+from .Xav.user_context import url_context
+
+import os
 
 """
     These views are only for testing the models, and their access
 """
-
-
-def search(request):
-    errors = []
-    if 'q' in request.GET:
-        message = 'You searched for: {}'.format(request.GET['q'])
-        message += "<br>"
-
-        projects = Project.objects.filter(name__contains=request.GET['q'])
-        if request.GET['q'] is '':
-            errors.append('Enter a search term.')
-            return render(request,
-                          'users/search_form.html',
-                          {'errors': errors})
-
-        return render(request,
-                      'users/search_form.html',
-                      {
-                          'errors': errors,
-                          'projects': projects,
-                          'query': request.GET['q']
-                      }
-                      )
-
-    return render(request,
-                  'users/search_form.html',
-                  {'errors': errors,
-                   'first': True})
 
 
 def index(request):
@@ -92,19 +79,17 @@ def login_auth_2(request):
 @login_required
 def logged_in(request, username):
     if AdminUser.objects.filter(username__exact=username).count() == 1:
-        user = AdminUser.objects.get(username__exact=username)
         return redirect('display_admin', username)
     elif LeaderUser.objects.filter(username__exact=username).count() == 1:
-        user = LeaderUser.objects.get(username__exact=username)
+        return redirect('display_leader', username)
     else:
         user = MemberUser.objects.get(username__exact=username)
+        return redirect('member_home', username)
 
-    # fix it properly later
-    # this is to just test the new functions
-    return render(request,
-                  'users/admin_logged_in.html',
-                  {'li': True,
-                   'user': user})
+    # return render(request,
+    #               'users-prev/admin_logged_in.html',
+    #               {'li': True,
+    #                'user': user})
 
 
 @login_required
@@ -114,291 +99,193 @@ def jump_ship(request):
     return redirect('login_page')
 
 
-# The following functions are done by Claudia
+@login_required
+def delete_admin(request, username, d):
+    """
+        Using random, crappy, no good, templates.
+        good enough for testing. Will add appropriate ones
+        soon.
+    """
+    a = AdminUser.objects.get(username__exact=d)
+    a.delete()
+    print('deleted')
+    return redirect('list_users', username)
 
 
 @login_required
-def create_admin_user(request, username):
-    """
-    Create an admin user.
-    username/add/$
-    :param username:
-    :param request:
-    :return:
-    """
-    form = AdminUserForm()
-    if request.method == 'POST':
-        form = AdminUserForm(request.POST)
-        if form.is_valid():
-            username = request.POST.get('username')
-            first_name = request.POST.get('first_name')
-            last_name = request.POST.get('last_name')
-            email = request.POST.get('email')
-            password = request.POST.get('password')
-            bio = request.POST.get('bio')
-            user = AdminUser.objects.create_user(username=username, first_name=first_name, last_name=last_name,
-                                                 email=email, password=password, bio=bio)
-            user.set_password(password)
-            user.save()
-            update_session_auth_hash(request, request.user)
-            return redirect('display_admin', request.user.username)
-    return render(request, 'users/adminuser_form.html', {'form': form, 'errors': form.errors})
+def list_users(request, username):
+    return render(request, 'list.html', {'admins': AdminUser.objects.all()})
 
 
 @login_required
-def get_admin_detail(request, username):
+@url_context
+def get_list_of_users(request):
     """
-    Display the information of an admin user
+    Display a list of admin users
+    /list/
     :param request:
-    :param username:
     :return:
+    :author Caroline
     """
-    user = AdminUser.objects.get(username__iexact=username)
-    return render(request, 'users/user_information.html', {'adminuser': user})
-
-
-@login_required
-def update_admin_detail(request, username):
-    """
-    Update the information of an admin user from "edit profile"
-    :param request:
-    :param username:
-    :return:
-    """
-    user = AdminUser.objects.get(username__iexact=username)
-    form_data = {'first_name': user.first_name, 'last_name': user.last_name,
-                 'email': user.email, 'password': " ", 'bio': user.bio}
-    form = AdminUpdateForm(request.POST, initial=form_data)
-    if request.method == 'POST':
-        if form.is_valid():
-            user.first_name = request.POST.get('first_name')
-            user.last_name = request.POST.get('last_name')
-            user.email = request.POST.get('email')
-            p = request.POST['password']
-            if (p is not '' or p is not None) and len(p.strip()) >= 8:
-                user.set_password(p)
-            user.bio = request.POST.get('bio')
-            user.save()
-            update_session_auth_hash(request, request.user)
-            return redirect('display_admin', username)
-
-    return render(request, 'users/update_admin_form.html', {'adminuser': user, 'form': form, 'errors': form.errors})
-
-
-@login_required
-def update_an_admin(request, username, a):
-    """
-    Update an admin's information from the list of all users
-    :param request:
-    :param username:
-    :param a:
-    :return:
-    """
-    adm = AdminUser.objects.get(username__iexact=a)
-    form_data = {'first_name': adm.first_name, 'last_name': adm.last_name,
-                 'email': adm.email, 'password': " ", 'bio': adm.bio}
-    form = AdminUpdateForm(request.POST, initial=form_data)
-    if request.method == 'POST':
-        if form.is_valid():
-            adm.first_name = request.POST.get('first_name')
-            adm.last_name = request.POST.get('last_name')
-            adm.email = request.POST.get('email')
-            p = request.POST['password']
-            if (p is not '' or p is not None) and len(p.strip()) >= 8:
-                adm.set_password(p)
-            adm.bio = request.POST.get('bio')
-            adm.save()
-            update_session_auth_hash(request, request.user)
-            return redirect('list_of_admins', username)
-
-    return render(request, 'users/update_admin_form.html', {'adminuser': adm, 'form': form, 'errors': form.errors})
-
-
-def delete_user(request, username, d):
-    """
-    To delete a particular user (admin/leader/member)
-    :param request:
-    :param username:
-    :param d:
-    :return:
-    """
-    if AdminUser.objects.filter(username__exact=d):
-        a = AdminUser.objects.get(username__exact=d)
-        a.delete()
-        print('admin deleted!')
-    if LeaderUser.objects.filter(username__exact=d):
-        l = LeaderUser.objects.get(username__exact=d)
-        l.delete()
-        print('leader deleted!')
-    if MemberUser.objects.filter(username__exact=d):
-        m = MemberUser.objects.get(username__exact=d)
-        m.delete()
-        print('member deleted!')
-    return redirect('list_of_users', username)
-
-
-@login_required
-def get_list_of_admins(request, username):
-    """
-    Display a list of admins
-    :param request:
-    :param username:
-    :return:
-    """
-    user = AdminUser.objects.get(username__iexact=username)
     admin_user_list = AdminUser.objects.order_by('pk')
+    paginator = Paginator(admin_user_list, 1)  # Show 3 admin per page
 
-    adm_paginator = Paginator(admin_user_list, 5)
-    adm_page = request.GET.get('page')
+    page = request.GET.get('page')
     try:
-        admin_list = adm_paginator.page(adm_page)
+        admin_list = paginator.page(page)
     except PageNotAnInteger:
-        admin_list = adm_paginator.page(1)
+        # If page is not an integer, deliver first page.
+        admin_list = paginator.page(1)
     except EmptyPage:
-        admin_list = adm_paginator.page(adm_paginator.num_pages)
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        admin_list = paginator.page(paginator.num_pages)
+    context = {'admin_list': admin_list, 'page': page}
+    return render(request, 'users/list_of_users.html', context)
 
-    context = {'adminuser': user, 'admin_list': admin_list, 'page': adm_page}
-    return render(request, 'users/list_of_admins.html', context)
 
-
+# ============================================================================
+# Release Me!
 @login_required
-def get_list_of_leaders(request, username):
-    """
-    Display a list leaders
-    :param request:
-    :param username:
-    :return:
-    """
-    user = AdminUser.objects.get(username__iexact=username)
-    leader_user_list = LeaderUser.objects.order_by('pk')
-
-    lead_paginator = Paginator(leader_user_list, 5)
-    lead_page = request.GET.get('page')
+def leader_home(request, username):
+    user = LeaderUser.objects.get(username__exact=username)
     try:
-        leader_list = lead_paginator.page(lead_page)
-    except PageNotAnInteger:
-        leader_list = lead_paginator.page(1)
-    except EmptyPage:
-        leader_list = lead_paginator.page(lead_paginator.num_pages)
+        tasks = user.project.actionlist.task_set.all()
+        for task in Task.objects.filter(action_list__project__leader__username=username):
+            print(task.title, task.action_list.project.name)
+            # print(task.deliverable.url)
+    except Exception as e:
+        print('Ahhhhhh')
+        tasks = None
+    return render(request, 'leader_home.html', {'user': user, 'tasks': tasks})
 
-    context = {'adminuser': user, 'leader_list': leader_list, 'page': lead_page}
-    return render(request, 'users/list_of_leaders.html', context)
+
+# @login_required
+# def create_member(request, username):
+#     pass
+class CreateMember(CreateView, LoginRequiredMixin):
+    fields = ['username', 'first_name', 'last_name', 'role', 'email', 'phone']
+    username = ''
+    model = MemberUser
+    l = None
+    template_name = 'create_member.html'
+
+    def form_valid(self, form):
+        form.instance.project = self.l.project
+        password = get_default_password()
+        form.instance.set_password(password)
+        mail_kickoff(form.instance, password)
+        messages.add_message(self.request, messages.INFO, 'Hello world.')
+        update_session_auth_hash(self.request, self.request.user)
+        return super(CreateMember, self).form_valid(form)
+
+    def get_form_kwargs(self):
+        self.l = LeaderUser.objects.get(username__exact=self.request.user.username)
+        p = self.request.get_full_path()
+        print(p)
+        self.success_url = '/'.join(p.split('/')[:-1]) + '/'
+        kwargs = super(CreateMember, self).get_form_kwargs()
+        # kwargs['pn'] = l.project.name
+        return kwargs
+
+
+class MemberHome(DetailView, LoginRequiredMixin):
+    model = MemberUser
+    username = ''
+    template_name = 'member_home.html'
+
+    def get_object(self, queryset=None):
+        return MemberUser.objects.get(username=self.kwargs.get('username'))
+
+    def get_context_data(self, **kwargs):
+        context = super(MemberHome, self).get_context_data(**kwargs)
+        return context
 
 
 @login_required
-def get_list_of_members(request, username):
-    """
-    Display a list members
-    :param request:
-    :param username:
-    :return:
-    """
-    user = AdminUser.objects.get(username__iexact=username)
-    member_user_list = MemberUser.objects.order_by('pk')
+def show_tasks(request, username):
+    ts = Task.objects.filter(members__username=username)
+    print(ts)
+    return render(request, 'list.html', {'tasks': ts})
 
-    mem_paginator = Paginator(member_user_list, 5)
-    mem_page = request.GET.get('page')
-    try:
-        member_list = mem_paginator.page(mem_page)
-    except PageNotAnInteger:
-        member_list = mem_paginator.page(1)
-    except EmptyPage:
-        member_list = mem_paginator.page(mem_paginator.num_pages)
 
-    context = {'adminuser': user, 'member_list': member_list, 'page': mem_page}
-    return render(request, 'users/list_of_members.html', context)
+# summer-paper-4342
+
+# ============================================================================
+# My project and tasks modules
+# 2017-03-22
+
+def get_project_path(p):
+    return os.path.join(BASE_DIR,
+                        os.path.join('projects', p.name + '/'))
 
 
 @login_required
-def get_member_detail(request, username):
-    """
-    Display the information of a member user
-    :param request:
-    :param username:
-    :return:
-    """
-    user = MemberUser.objects.get(username__iexact=username)
-    return render(request, 'users/member_information.html', {'memberuser': user})
-
-
-@login_required
-def update_member(request, username, m):
-    """
-    Update a member's information from the list of all users
-    :param request:
-    :param username:
-    :param m:
-    :return:
-    """
-    mem = MemberUser.objects.get(username__iexact=m)
-    form_data = {'first_name': mem.first_name, 'last_name': mem.last_name,
-                 'email': mem.email, 'password': " ", 'bio': mem.bio}
-    form = MemberUpdateForm(request.POST, initial=form_data)
+def create_project(request, username):
     if request.method == 'POST':
+        form = CreateProjectForm(request.POST)
         if form.is_valid():
-            mem.first_name = request.POST.get('first_name')
-            mem.last_name = request.POST.get('last_name')
-            mem.email = request.POST.get('email')
-            p = request.POST['password']
-            if (p is not '' or p is not None) and len(p.strip()) >= 8:
-                mem.set_password(p)
-            mem.bio = request.POST.get('bio')
-            mem.save()
-            update_session_auth_hash(request, request.user)
-            return redirect('list_of_members', username)
-
-    return render(request, 'users/update_member_form.html', {'memberuser': mem, 'form': form, 'errors': form.errors})
-
-
-@login_required
-def display_all_projects(request, username):
-    """
-    Display all projects
-    :param request:
-    :param username:
-    :return:
-    """
-    project_list = Project.objects.all().order_by('status')[:5]
-    return render(request, 'users/all_project_list.html', {'project_list': project_list})
-
-
-@login_required
-def display_open_projects(request, username):
-    """
-    Display a list of open projects
-    :param request:
-    :param username:
-    :return:
-    """
-    open_project_list = Project.objects.filter(status='0').order_by('start_date')[:5]
-    return render(request, 'users/open_project_list.html', {'open_project_list': open_project_list})
-
-
-@login_required
-def project_information(request, username, p):
-    """
-    Display a particular project information
-    :param request:
-    :param username:
-    :param p:
-    :return:
-    """
-    project = Project.objects.get(name__exact=p)
-    return render(request, 'users/project_information.html', {'project': project})
-
-
-@login_required
-def view_project_log(request, username, p):
-    """
-    Retrieve and view a particular project log - untested
-    :param request:
-    :param username:
-    :param p:
-    :return:
-    """
-    project = Project.objects.get(name__exact=p)
-    if AdminUser.objects.filter(username__exact=username):
-        return redirect('/logs/{project.name}')
+            p = form.save(commit=False)
+            p.leader = LeaderUser.objects.get(username__exact=username)
+            p.status = 1
+            p.save()
+            path = get_project_path(p)
+            os.makedirs(path, 0o755)
+        return redirect('display_leader', username)
     else:
-        return PermissionDenied
-    return render(request, 'users/project_information.html', {'project': project})
+        form = CreateProjectForm()
+
+    return render(request, 'crproj.html', {'form': form})
+
+
+@login_required
+def create_task(request, username):
+    l = LeaderUser.objects.get(username__exact=username)
+    if request.method == 'POST':
+        form = CreateTaskForm(request.POST)
+        if form.is_valid():
+            mem_dat = form.cleaned_data.get('members')
+            title = form.cleaned_data.get('title')
+            est_end = form.cleaned_data.get('est_end')
+            status = form.cleaned_data.get('status')
+            lt = form.cleaned_data.get('to_leader')
+            if lt is None:
+                lt = False
+            t = Task.objects.create(title=title, est_end=est_end, status=status, to_leader=lt,
+                                    action_list=l.project.actionlist)
+            t.save()
+            for m in mem_dat:
+                t.members.add(m)
+            t.save()
+            return redirect('leader_home', username)
+        else:
+            print(form.errors)
+    else:
+        form = CreateTaskForm({'pn': l.project.name})
+
+    return render(request, 'crtask.html', {'form': form})
+
+
+class TaskUpdate(UpdateView, LoginRequiredMixin):
+    username = ''
+    model = Task
+    template_name = 'crtask.html'
+    content_type = 'multipart-form-data'
+    form_class = LeaderUpdateTaskForm
+
+    def get_form_kwargs(self):
+        l = LeaderUser.objects.get(username__exact=self.request.user.username)
+        t = Task.objects.get(pk=self.kwargs['pk'])
+        up_flag = False
+        up_name = ''
+        if bool(t.deliverable):
+            up_flag = True
+            up_name = t.deliverable.name.split('/')[-1]
+            t.status = 'Completed'
+            t.save()
+        p = self.request.get_full_path()
+        self.success_url = '/'.join(p.split('/')[:-3]) + '/'
+        kwargs = super(TaskUpdate, self).get_form_kwargs()
+        kwargs['pn'] = l.project.name
+        kwargs['up_flag'] = up_flag
+        kwargs['up_name'] = up_name
+        return kwargs

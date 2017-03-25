@@ -1,69 +1,87 @@
 from django.test import TestCase
-
-from datetime import datetime, timedelta
 from parse import *
 
-from users.models import *
 from log.Log import log
+from users.models import *
 
 
 # Create your tests here.
 class LogTest(TestCase):
     def setUp(self):
         # Create role.
-        self.r = Role()
-        self.r.title = 'Security Coordinator'
-        self.r.save()
+        r = Role()
+        r.title = 'Security Coordinator'
+        r.save()
 
         # Create admin
-        self.adm = AdminUser(username='admin_man', first_name='admin', last_name='man')
-        self.adm.set_password('qwerty123')
-        self.adm.save()
+        adm = AdminUser(username='G2503472', first_name='admin', last_name='man')
+        adm.email = 'admin_man@example.com'
+        adm.set_password('qwerty123')
+        adm.save()
 
         # Create leader
-        self.l = LeaderUser(username='leader_man', first_name='leader', last_name='man')
-        self.l.set_password('qwerty123')
-        self.l.save()
+        l = LeaderUser(username='69497604', first_name='leader', last_name='man')
+        l.email = 'leader_man@example.com'
+        l.set_password('qwerty123')
+        l.save()
 
         # Create project
-        self.p = Project(name='PMT')
-        self.p.start_date = datetime.now()
-        self.p.end_date = datetime.now() + timedelta(days=30)
-        self.p.leader_id = self.l.id
-        self.p.save()
-        # !!!!!!
-        self.p.admins.add(self.adm)
-        self.p.save()
+        p = Project(name='Test')
+        p.start_date = datetime.now()
+        p.end_date = datetime.now() + timedelta(days=30)
+        p.leader_id = l.id
+        p.save()
+        p.admins.add(adm)
+        p.save()
 
         # Create member
-        self.m = MemberUser(username='theseus', first_name='theseus', last_name='demigod')
-        self.m.set_password('qwerty123')
-        self.m.role_id = self.r.id
-        self.m.project_id = self.p.id
-        self.m.save()
+        m = MemberUser(username='56475644', first_name='Heracles', last_name='Alcmene')
+        m.set_password('qwerty123')
+        m.email = 'heracles@example.com'
+        m.role_id = r.id
+        m.project_id = p.id
+        m.save()
+
+        n = MemberUser(username='40475328', first_name='Perseus', last_name='Son of Danae')
+        n.set_password('qwerty123')
+        n.email = 'perseus@example.com'
+        n.role_id = r.id
+        n.project_id = p.id
+        n.save()
+
+        o = MemberUser(username='81343691', first_name='Apollo', last_name='Son of Leto')
+        o.set_password('qwerty123')
+        o.email = 'apollo@example.com'
+        o.role_id = r.id
+        o.project_id = p.id
+        o.save()
 
     def Test_log_contains_info_member(self):
-        log('INFO', self.m, 'test content')
-        f = open(self.p.activitylog.content, 'r')
+        m = MemberUser.objects.get(first_name__exact='Heracles')
+        p = m.project
+        log('INFO', m, 'test content')
+        f = open(p.activitylog.content, 'r')
         logfile = f.readlines()[0]
         data = parse('[{}] [{}] [{}] [{}] [{}] [{}]', logfile)
         TestCase.assertEquals(self, data[0], 'INFO')
-        TestCase.assertEquals(self, data[1], self.m.username)
+        TestCase.assertEquals(self, data[1], m.username)
         TestCase.assertEquals(self, data[2], 'MEMBER')
-        TestCase.assertEquals(self, data[3], self.m.project.name)
+        TestCase.assertEquals(self, data[3], m.project.name)
         TestCase.assertEquals(self, data[5], 'test content')
         f.flush()
         f.close()
 
     def Test_log_contains_warning_leader(self):
-        log('WARNING', self.l, 'leader log record')
-        f = open(self.p.activitylog.content, 'r')
+        l = LeaderUser.objects.get(first_name__exact='leader')
+        p = l.project
+        log('WARNING', l, 'leader log record')
+        f = open(p.activitylog.content, 'r')
         logfile = f.readlines()[1]
         data = parse('[{}] [{}] [{}] [{}] [{}] [{}]', logfile)
         TestCase.assertEquals(self, data[0], 'WARNING')
-        TestCase.assertEquals(self, data[1], self.l.username)
+        TestCase.assertEquals(self, data[1], l.username)
         TestCase.assertEquals(self, data[2], 'LEADER')
-        TestCase.assertEquals(self, data[3], self.l.project.name)
+        TestCase.assertEquals(self, data[3], l.project.name)
         TestCase.assertEquals(self, data[5], 'leader log record')
         f.flush()
         f.close()
@@ -83,6 +101,13 @@ class LogTest(TestCase):
         self.Test_log_contains_info_member()
         self.Test_log_contains_warning_leader()
 
-        logfile = open(self.p.activitylog.content, 'r').readlines()
+        p = Project.objects.get(name__exact='Test')
+
+        f = open(p.activitylog.content, 'r')
+        logfile = f.readlines()
         number_of_lines = len(logfile)
         TestCase.assertEquals(self, number_of_lines, 2)
+        f.close()
+        os.remove(p.activitylog.content)
+        s = '/'.join(p.activitylog.content.split('/')[:-1])
+        os.rmdir(s)

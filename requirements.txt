@@ -1,7 +1,14 @@
+schedule
 django
 mysqlclient
 whitenoise
 django-guardian
 django-annoying
+django-cron
 parse
 yattag
+haikunator
+twilio
+django-bootstrap3
+django-bootstrap-datepicker
+django-filters

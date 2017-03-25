@@ -7,16 +7,17 @@ from yattag import Doc
 
 
 # Create your views here.
-def test(request):
-    p = Project.objects.get(name__exact='PMT')
+def test(request, username, project):
+    proj = Project.objects.get(name__exact=project)
 
     doc, tag, text = Doc().tagtext()
     with tag('h3', id='main-title'):
-        # enter project.name here
-        text('PMT')
+        text(project)
 
-    p = parse_log(p)
+    p = parse_log(proj)
     return render(request, 'log/test.html',
                   {'log_data': p.test(),
-                   'project_title': doc.getvalue()
+                   'project_title': doc.getvalue(),
+                   'title': proj.name,
+                   'section': 'Log'
                    })

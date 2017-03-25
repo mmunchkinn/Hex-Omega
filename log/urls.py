@@ -3,5 +3,6 @@ from django.conf.urls import url, include
 from .views import *
 
 urlpatterns = [
-    url(r'', test),
+    url(r'^leader_user/(?P<username>[A-Z0-9][0-9]{7})/(?P<project>[A-Za-z]+)/log/$', test),
+    url(r'^admin_user/(?P<username>[A-Z0-9][0-9]{7})/(?P<project>[A-Za-z]+)/log/$', test),
 ]

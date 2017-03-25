@@ -4,6 +4,7 @@ from django.contrib.auth.models import Group
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import PermissionsMixin
+import itertools
 from guardian.mixins import GuardianUserMixin
 
 import os
@@ -16,6 +17,8 @@ class User(AbstractUser, GuardianUserMixin):
     is_admin = False
     is_leader = False
     is_member = False
+    phone = models.TextField(max_length=15, blank=True)
+    email = models.EmailField(unique=True, blank=True)
 
     def __str__(self):
         return self.get_full_name()
@@ -97,17 +100,26 @@ class Project(models.Model):
     Model changelog:
         1.  have to add null=True for the date fields.
     """
-    name = models.CharField(max_length=50, blank=False)
+
+    @property
+    def get_name(self):
+        return self.name
+
+    name = models.CharField(max_length=50, blank=False, unique=True)
     STATUS_CHOICES = (
         ('Open', 'Open'),
         ('Closed', 'Closed')
     )
     status = models.CharField(choices=STATUS_CHOICES, default=0, max_length=7)
-    start_date = models.DateTimeField(blank=True)
-    end_date = models.DateTimeField(blank=True)
+    start_date = models.DateField(blank=True)
+    end_date = models.DateField(blank=True)
     description = models.TextField(max_length=500, blank=True)
     leader = models.OneToOneField(LeaderUser, models.DO_NOTHING)
     admins = models.ManyToManyField(AdminUser)
+
+    def path(self):
+        os.path.join(BASE_DIR,
+                     os.path.join('projects', self.name + '/'))
 
     def __str__(self):
         return self.name
@@ -119,9 +131,14 @@ class Project(models.Model):
 @receiver(post_save, sender=Project)
 def add_activitylog(sender, instance, created, **kwargs):
     if created:
+        print(instance.name)
         c = os.path.join(BASE_DIR,
-                                os.path.join('projects',
-                                             os.path.join(str(instance.name), 'activity.log')))
+                         os.path.join('projects',
+                                      os.path.join(instance.name, 'activity.log')))
+        print(c)
+        print('/'.join(c.split('/')[:-1]))
+        instance.path = '/'.join(c.split('/')[:-1]) + '/'
+        # instance.save()
         ActivityLog.objects.create(title=instance.name, project=instance, content=c)
 
 
@@ -143,6 +160,38 @@ class ActionList(models.Model):
         db_table = 'ActionList'
 
 
+class MemberUser(User, PermissionsMixin):
+    role = models.ForeignKey(Role, models.DO_NOTHING)
+    project = models.ForeignKey(Project, models.DO_NOTHING)
+    # tasks = models.ManyToManyField(Task)
+    is_member = True
+
+    class Meta:
+        db_table = 'Member'
+        permissions = (
+            ('can_create_member', 'Can create Team Member'),
+        )
+
+
+def get_path(instance, filename):
+    p = os.path.join(BASE_DIR,
+                     os.path.join('projects', instance.action_list.project.name + '/'))
+    print(p)
+    f = os.path.join(p, filename)
+    print(f)
+    return f
+
+
+def get_student_list(project):
+    m = project.memberuser_set.all()
+    l = project.leader
+    students = list(m)
+    students.append(l)
+    for s in students:
+        print(str(s.username) + ' -- ' + str(type(s)))
+    return [s.username for s in students]
+
+
 class Task(models.Model):
     """
         Model Changelog:
@@ -160,15 +209,19 @@ class Task(models.Model):
         ('Not Submitted', 'Not Submitted')
     )
     status = models.CharField(choices=TASK_STATUS_CHOICES, max_length=14, default=2, blank=False)
-    # have to add deliverable (FileUploadField)
-    est_start = models.DateTimeField()
+    start_date = models.DateTimeField(auto_now=True)
     est_end = models.DateTimeField(null=True, blank=True)
-    actual_start = models.DateTimeField(null=True, blank=True)
     actual_end = models.DateTimeField(null=True, blank=True)
     description = models.TextField(max_length=500, null=True, blank=True)
     link = models.URLField(null=True, blank=True)
-    title = models.CharField(max_length=50, null=True, blank=True)
+    title = models.CharField(max_length=50, unique=True, blank=True)
     action_list = models.ForeignKey(ActionList, models.CASCADE, null=True, blank=True)
+    deliverable = models.FileField(upload_to=get_path, blank=True, null=True)
+    to_leader = models.NullBooleanField(verbose_name="Is the leader working on this Task?", null=True)
+    members = models.ManyToManyField(MemberUser)
+
+    def deliverable_name(self):
+        return self.deliverable.name
 
     def __str__(self):
         return self.title
@@ -189,19 +242,6 @@ class ActivityLog(models.Model):
 
     class Meta:
         db_table = 'ActivityLog'
-
-
-class MemberUser(User, PermissionsMixin):
-    role = models.ForeignKey(Role, models.DO_NOTHING)
-    project = models.ForeignKey(Project, models.DO_NOTHING)
-    is_member = True
-
-    class Meta:
-        db_table = 'Member'
-        permissions = (
-            ('can_create_member', 'Can create Team Member'),
-        )
-
 
 # @receiver(post_save, sender=MemberUser)
 # def add_member_to_group(sender, instance, created, **kwargs):
