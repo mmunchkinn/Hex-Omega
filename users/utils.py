@@ -6,6 +6,7 @@ from haikunator import haikunator
 from twilio.rest import TwilioRestClient
 from datetime import datetime, timedelta
 import _thread
+import os
 
 sys_email = 'hex.omega@yandex.com'
 
@@ -65,3 +66,9 @@ def send_reminder_threads(mails, **kwargs):
         tuple(mails),
         fail_silently=False
     )
+
+
+def uploaded_file_handler(f, path):
+    with open(os.path.join(path, f.name), 'wb') as destination:
+        for chunk in f.chunks():
+            destination.write(chunk)

@@ -4,7 +4,7 @@ from .user_form import AdminUserForm, AdminUpdateForm, UserUpdateForm
 
 from users.models import User
 
-from users.filters import SearchFilter
+from users.Claudia.filters import SearchFilter
 
 
 @login_required
@@ -118,7 +118,8 @@ def display_open_projects(request, username):
         open_project_list = open_proj_paginator.page(1)
     except EmptyPage:
         open_project_list = open_proj_paginator.page(open_proj_paginator.num_pages)
-    return render(request, 'users/open_project_list.html', {'open_project_list': open_project_list, 'page': open_proj_page})
+    return render(request, 'users/open_project_list.html',
+                  {'open_project_list': open_project_list, 'page': open_proj_page})
 
 
 @login_required

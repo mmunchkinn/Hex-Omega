@@ -88,6 +88,17 @@ def setup():
     o.project_id = p.id
     o.save()
 
+    t = Task(status='Assigned', start_date=datetime.now() - timedelta(days=1),
+             est_end=datetime.now() + timedelta(days=1), action_list=p.actionlist)
+    t.actual_end = t.est_end
+    t.title = 'Programming'
+    t.save()
+    t.members.add(m)
+    t.members.add(n)
+    t.members.add(o)
+    t.to_leader = True
+    t.save()
+
     # Claudia's sample data
     m1 = MemberUser(username='34656000', first_name='first', last_name='member')
     m1.set_password('qwerty123')
@@ -96,19 +107,7 @@ def setup():
     m1.project_id = p.id
     m1.save()
 
-    t = Task(status='Assigned', est_start=datetime.now() - timedelta(days=1),
-             est_end=datetime.now() + timedelta(days=1), action_list=p.actionlist)
-    t.actual_start = t.est_start
-    t.actual_end = t.est_end
-    t.title = 'Programming'
-    t.save()
-    t.users.add(m)
-    t.users.add(n)
-    t.users.add(o)
-    t.users.add(l)
-    t.save()
-
-    # start_schedule_thread()
+    start_schedule_thread()
     # tasks_email_schedule()
 
 

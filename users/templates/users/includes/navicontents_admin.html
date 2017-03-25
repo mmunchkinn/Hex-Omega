@@ -1,27 +1,27 @@
 <ul class="nav">
                 <li class="active">
-                    <a href="{% url 'display_admin' request.user.username %}">
+                    <a href="{% url 'open_project' user.username %}">
                         <i class="pe-7s-home"></i>
                         <p>Home</p>
                     </a>
 
                 </li>
-                <li>
-                    <a href= "{% url 'list_of_users' user.username %}">
+                <!--<li>
+                    <a href= "{#  url 'list_of_admins' user.username #}">
                         <i class="pe-7s-user"></i>
                         <p>Admin Users</p>
                     </a>
-                </li>
-                <li>
-                    <a href= "{% url 'list_of_users' user.username %}">
+                </li>-->
+                <!--<li>
+                    <a href= "{#  url 'list_of_leaders' user.username #}">
                         <i class="pe-7s-user"></i>
                         <p>Leader Users</p>
                     </a>
-                </li>
+                </li>-->
                 <li>
                     <a href= "{% url 'list_of_users' user.username %}">
                         <i class="pe-7s-user"></i>
-                        <p>Member Users</p>
+                        <p>All Users</p>
                     </a>
                 </li>
                 <li>

@@ -1,0 +1,22 @@
+<ul class="nav">
+                <li class="active">
+                    <a href="#">
+                        <i class="pe-7s-home"></i>
+                        <p>Home</p>
+                    </a>
+
+                </li>
+                <li>
+                    <a href= "{% url 'task_list' request.user.username %}">
+                        <i class="pe-7s-user"></i>
+                        <p>View Assigned Tasks</p>
+                    </a>
+                </li>
+                <li>
+                    <a href="#">
+                        <i class="pe-7s-note2"></i>
+                        <p>Upload Deliverable</p>
+                    </a>
+                </li>
+                
+</ul>
