@@ -1,25 +1,20 @@
-{%extends "users/base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Member</title>
+</head>
+<body style="padding: 5% 20%; color: black;">
+
 {% load bootstrap3 %}
- {% block navi_content %}
-		   {%include "users/includes/navicontents_leader.html" %}
-
-{% endblock %}
-{% block usernavi_content %}
-		  {%include "users/includes/usernavicontents_leader.html" %}
-{% endblock %}
-
-{% block main_content %}
-	<div class="header">
-        <h4 class="title">Create Member</h4>
-    </div>
-	
-<div style="padding: 5% 20%; color: black;">	
+{% load static %}
+{% load i18n %}
 <link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css"/>
 <link rel="stylesheet" type="text/css" href="/static/admin/css/base.css"/>
 <link rel="stylesheet" type="text/css" href="/static/admin/css/widgets.css"/>
 
 {% url 'admin:jsi18n' as jsi18nurl %}
-<script type="text/javascript" src="{{ jsi18nurl|default:"../../../jsi18n/ "}}"></script>
+<script type="text/javascript" src="{{ jsi18nurl|default:"../../../jsi18n/" }}"></script>
 
 <fieldset>
     <div class="form-row">
@@ -40,8 +35,5 @@
       integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
 
-</div>
-						
-	                        
-
-{% endblock %}
+</body>
+</html>

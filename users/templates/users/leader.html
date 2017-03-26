@@ -1,22 +1,18 @@
 {%extends "users/base.html" %}
  {% block navi_content %}
-
-		{%include "users/includes/navicontents_leader.html" %}
-   
-
+		 {%include "users/includes/navicontents_leader.html" %}
 {% endblock %}
 {% block usernavi_content %}
-		
-		{%include "users/includes/usernavicontents_leader.html" %}
+		 {%include "users/includes/usernavicontents_leader.html" %} 
 
 {% endblock %}
-{% block main_content %}
 
+{% block main_content %}
 	{% csrf_token %}
-						<div class="header">
-                                <h4 class="title">{{ memberuser.first_name }} {{ memberuser.last_name }}'s Information</h4>
-                        </div>
-	
+	<div class="header">
+        <h4 class="title">{{ leaderuser.get_full_name }}'s Information</h4>
+    </div>
+						
 	                        <div class="col-md-6">
                             <div class="content table-responsive table-full-width" >
 
@@ -25,31 +21,32 @@
                                     <tbody>
                                         <tr> 
                                             <td class="col-xs-3">User Name</td>
-                                            <td>{{ membuser.username }}</td> 
+                                            <td>{{ leaderuser.username }}</td> 
                                         </tr>
                                         <tr> 
                                             <td>First Name</td>
-                                            <td>{{ memberuser.first_name }}</td> 
+                                            <td>{{ leaderuser.first_name }}</td> 
                                         </tr>
                                         <tr> 
                                             <td>Last Name</td>
-                                            <td>{{ memberuser.last_name }}</td> 
+                                            <td>{{ leaderuser.last_name }}</td> 
                                         </tr>
                                         <tr> 
                                             <td>Email</td>
-                                            <td>{{ memberuser.email }}</td> 
+                                            <td>{{ leaderuser.email }}</td> 
                                         </tr>
                                         <tr> 
                                             <td>Biography</td>
-                                            <td>{{memberuser.bio }}</td> 
+                                            <td>{{ leaderuser.bio }}</td> 
                                         </tr>
                                         <tr>
                                             <td>Project</td>
-                                            <td>{{ memberuser.project.name }}</td>
+                                            <td>{{ leaderuser.project.name }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
 
                             </div>
                         </div>
+
 {% endblock %}

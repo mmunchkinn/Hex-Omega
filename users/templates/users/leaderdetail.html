@@ -1,9 +1,20 @@
 {%extends "users/base.html" %}
  {% block navi_content %}
-		 {%include "users/includes/navicontents_leader.html" %}
+		 {% ifequal user.groups.all.0 'admin_group' %}
+		        {%include "users/includes/navicontents_admin.html" %}
+    
+	    {% else %}
+		       {%include "users/includes/navicontents_leader.html" %}
+        {% endifequal %}
+
 {% endblock %}
 {% block usernavi_content %}
-		 {%include "users/includes/usernavicontents_leader.html" %}
+		 {% ifequal user.groups.all.0 'admin_group' %}
+		        {%include "users/includes/usernavicontents_admin.html" %}
+    
+	    {% else %}
+		         {%include "users/includes/usernavicontents_leader.html" %}
+        {% endifequal %}
 
 {% endblock %}
 
@@ -21,27 +32,27 @@
                                     <tbody>
                                         <tr> 
                                             <td class="col-xs-3">User Name</td>
-                                            <td>{{ leaderuser.username }}</td> 
+                                            <td>{{ user.username }}</td> 
                                         </tr>
                                         <tr> 
                                             <td>First Name</td>
-                                            <td>{{ leaderuser.first_name }}</td> 
+                                            <td>{{ user.first_name }}</td> 
                                         </tr>
                                         <tr> 
                                             <td>Last Name</td>
-                                            <td>{{ leaderuser.last_name }}</td> 
+                                            <td>{{ user.last_name }}</td> 
                                         </tr>
                                         <tr> 
                                             <td>Email</td>
-                                            <td>{{ leaderuser.email }}</td> 
+                                            <td>{{ user.email }}</td> 
                                         </tr>
                                         <tr> 
                                             <td>Biography</td>
-                                            <td>{{ leaderuser.bio }}</td> 
+                                            <td>{{ user.bio }}</td> 
                                         </tr>
                                         <tr>
                                             <td>Project</td>
-                                            <td>{{ leaderuser.project.name }}</td>
+                                            <td>{{ user.project.name }}</td>
                                         </tr>
                                     </tbody>
                                 </table>

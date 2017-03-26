@@ -226,3 +226,17 @@ def search_users(request, username):
         result_list = SearchFilter(request.GET, queryset=queryset)
         return render(request, 'users/search.html', {'result_list': result_list})
     return render(request, 'users/search.html')
+
+
+def delete_project(request, username, d):
+    """
+    Delete a project from the system
+    :param request:
+    :param username:
+    :param d:
+    :return:
+    """
+    if Project.objects.get(name__iexact=d):
+        project = Project.objects.get(name__iexact=d)
+        project.delete()
+    return redirect('all_project', username)

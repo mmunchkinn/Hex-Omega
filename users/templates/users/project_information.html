@@ -7,16 +7,13 @@
 {% endblock %}
 
 {% block main_content %}
-	
 	{% csrf_token %}
 	
-	  <div class="header">
-        <h4 class="title">{{ project.name}}'s Information</h4>
-    </div>
 	
 	   <div class="col-md-6">
+	  
         <div class="content table-responsive table-full-width" >
-
+<h4 class="title">{{ project.name}}'s Information</h4>
             <table class="table table-hover table-striped" id="tabledetails">
                                     
                 <tbody>

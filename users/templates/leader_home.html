@@ -15,7 +15,6 @@
     <meta name="viewport" content="width=device-width" />
 
 
-
     <!-- Bootstrap core CSS     -->
     <link href="{% static 'users/css/bootstrap.min.css' %}" rel="stylesheet" />
 
@@ -70,17 +69,6 @@
 			<div class="col-md-12">
                         <div class="card">
 						<div style="padding: 5% 20%; ">
-                        <div style="list-style-type: none; color: white;">
-                        {% if messages %}
-                        <ul class="messages">
-                            {% for message in messages %}
-                            <li{% if message.tags %} class="{{ message.tags }}"{% endif %} style="list-style-type: none">
-                                {{ message }}
-                            </li>
-                            {% endfor %}
-                        </ul>
-                        {% endif %}
-                        </div>
 								{% if not user.project %}
 									{% buttons %}
 										<a href="{% url 'create_project' user.username %}">
@@ -91,20 +79,10 @@
 										</a>
 								{% else %}
 									{% for task in tasks %}
-										<li style="list-style-type: none;">
-                                            <a href="{% url 'leader_update_task' username=user.username pk=task.id %}">
-                                                {{ task.title }} - {{ task.status }} - {{ task.est_end|date }}
-                                            </a>
-                                        </li>
+										<li style="list-style-type: none;"><h3>
+                                            <a style="color: white;" href="{% url 'leader_update_task' username=user.username pk=task.id %}">{{ task.title|pprint|linenumbers }} - {{ task.est_end|date }}</a>
+                                        </h3></li>
 									{% endfor %}
-
-									{% buttons %}
-											<a href="{% url 'add_task' user.username %}">
-												<button type="submit" class="btn btn-primary" style="margin-top: 30px;">
-												{% bootstrap_icon "" %} Add Tasks
-												</button>
-                                            </a>
-									{% endbuttons %}
 								{% endif %}
 								<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
                                 <link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">

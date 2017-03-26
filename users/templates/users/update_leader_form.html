@@ -1,11 +1,21 @@
 {% extends 'users/base.html' %}
 {% block navi_content %}
  
-		 {%include "users/includes/navicontents_leader.html" %}
+    {% ifequal user.groups.all.0 'admin_group' %}
+		{%include "users/includes/navicontents_admin.html" %}
+    
+	{% else %}
+		{%include "users/includes/navicontents_leader.html" %}
+    {% endifequal %}
+ 
 {% endblock %}
 {% block usernavi_content %}
-		 {%include "users/includes/usernavicontents_leader.html" %}
-		
+{% ifequal user.groups.all.0 'admin_group' %}
+		{%include "users/includes/usernavicontents_admin.html" %} 
+    
+	{% else %}
+		{%include "users/includes/usernavicontents_leader.html" %} 
+    {% endifequal %}	
 		           
 				   
 {% endblock %}

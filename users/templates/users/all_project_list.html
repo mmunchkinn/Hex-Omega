@@ -13,12 +13,11 @@
      <table class="table table-hover table-striped" summary="project_list">
          {% if all_project_list %}
              <thead>
-                                        
              <th>Name</th>
              <th>Start Date</th>
              <th>End Date</th>
              <th>Status</th>
-                                        
+             <th style="text-align:center" >Delete</th>
              </thead>
              <tbody>
              {% for proj in all_project_list  %}
@@ -32,6 +31,12 @@
                      {% if proj.status == '1' %}
                          <td>Closed</td>
                      {% endif %}
+                    <td style="text-align:center">
+                        <a href="{% url 'delete_project' request.user.username proj.name %}">
+                            <div class="font-icon-detail"><i class="pe-7s-trash"></i>
+                            </div>
+                        </a>
+                    </td>
                  </tr>
              {% endfor %}
              </tbody>
