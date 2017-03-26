@@ -25,8 +25,9 @@ def create_admin_user(request, username):
             last_name = request.POST.get('last_name')
             email = request.POST.get('email')
             password = get_default_password()
+            phone = request.POST.get('phone')
             # bio = request.POST.get('bio')
-            user = AdminUser.objects.create(username=username, first_name=first_name, last_name=last_name,
+            user = AdminUser.objects.create(username=username, first_name=first_name, last_name=last_name, phone=phone,
                                             email=email)
             user.set_password(password)
             mail_kickoff(user, password)
@@ -59,7 +60,7 @@ def update_admin_detail(request, username):
     """
     user = AdminUser.objects.get(username__iexact=username)
     form_data = {'first_name': user.first_name, 'last_name': user.last_name,
-                 'email': user.email, 'password': " ", 'bio': user.bio}
+                 'email': user.email, 'password': " ", 'phone': user.phone, 'bio': user.bio}
     form = AdminUpdateForm(request.POST, initial=form_data)
     if request.method == 'POST':
         print(form.errors)
@@ -70,6 +71,7 @@ def update_admin_detail(request, username):
             p = request.POST['password']
             if (p is not '' or p is not None) and len(p.strip()) >= 8:
                 user.set_password(p)
+            user.phone = request.POST.get('phone')
             user.bio = request.POST.get('bio')
             user.save()
             update_session_auth_hash(request, request.user)
@@ -145,11 +147,12 @@ def user_update(request, username, user):
     :return:
     """
     person = User.objects.get(username__iexact=user)
-    form_data = {'email': person.email, 'password': " "}
+    form_data = {'email': person.email, 'phone': person.phone, 'password': " "}
     form = UserUpdateForm(request.POST, initial=form_data)
     if request.method == 'POST':
         if form.is_valid():
             person.email = request.POST.get('email')
+            person.phone = request.POST.get('phone')
             pw = request.POST['password']
             if (pw is not '' or pw is not None) and len(pw.strip()) >= 8:
                 person.set_password(pw)
