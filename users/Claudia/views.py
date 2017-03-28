@@ -42,6 +42,7 @@ def get_admin_detail(request, username):
     """
     Display the information of an admin user
     :param request:
+    :param username:
     :return:
     """
     user = AdminUser.objects.get(username__iexact=username)
@@ -228,6 +229,7 @@ def search_users(request, username):
     return render(request, 'users/search.html')
 
 
+@login_required
 def delete_project(request, username, d):
     """
     Delete a project from the system
